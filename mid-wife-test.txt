@@ -1,0 +1,2124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>助産師国家試験対策ドリル - Pro</title>
+    <style>
+        :root {
+            --primary: #e91e63;
+            /* ピンク */
+            --primary-light: #fce4ec;
+            --primary-dark: #c2185b;
+            --secondary: #00bcd4;
+            /* 水色 */
+            --secondary-light: #e0f7fa;
+            --text: #444;
+            --bg: #fdfdfd;
+            --white: #ffffff;
+            --success: #4caf50;
+            --error: #ef5350;
+            --gray: #9e9e9e;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary-light);
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 1.6rem;
+            margin: 0;
+            letter-spacing: 0.05em;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+            color: var(--text);
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0;
+            transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0);
+            }
+        }
+
+        /* Start Screen & Difficulty */
+        .difficulty-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .diff-label {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .diff-label input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .diff-btn {
+            display: block;
+            padding: 10px 20px;
+            background: var(--white);
+            border: 2px solid #ddd;
+            border-radius: 30px;
+            color: #888;
+            font-weight: bold;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* Difficulty Active States */
+        .diff-label input:checked + .diff-btn {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .diff-label input[value="中級"]:checked + .diff-btn {
+            background: var(--secondary);
+            border-color: var(--secondary);
+            color: var(--white);
+        }
+        .diff-label input[value="上級"]:checked + .diff-btn {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+        .diff-label input[value="鬼レベル"]:checked + .diff-btn {
+            background: #4a148c;
+            /* 紫 */
+            border-color: #4a148c;
+            color: var(--white);
+        }
+
+        .mode-select {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            background: var(--white);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 15px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: var(--primary);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn.secondary {
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+        .btn.secondary:hover {
+            background: var(--secondary);
+            color: var(--white);
+        }
+
+        /* Quiz Screen */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .question-box {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            border-top: 5px solid var(--secondary);
+        }
+
+        .badges {
+            margin-bottom: 15px;
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            margin-right: 5px;
+            color: var(--white);
+            font-weight: bold;
+        }
+        .badge-genre { background: var(--secondary);
+        }
+        .badge-diff { background: #999;
+        }
+        .badge-diff.中級 { background: var(--secondary);
+        }
+        .badge-diff.上級 { background: var(--primary);
+        }
+        .badge-diff.鬼レベル { background: #4a148c;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option-btn {
+            width: 100%;
+            padding: 16px 20px;
+            text-align: left;
+            background: var(--white);
+            border: 2px solid #eee;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            font-size: 1rem;
+            color: var(--text);
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--secondary);
+            background: var(--secondary-light);
+        }
+
+        .option-btn:disabled {
+            cursor: default;
+            opacity: 0.8;
+        }
+
+        /* Feedback Styles */
+        .option-btn.correct {
+            background: #e8f5e9;
+            border-color: var(--success);
+            color: #2e7d32;
+        }
+
+        .option-btn.incorrect {
+            background: #ffebee;
+            border-color: var(--error);
+            color: #c62828;
+        }
+
+        .option-btn.correct::after {
+            content: "◎";
+            position: absolute;
+            right: 20px;
+            font-weight: bold;
+            color: var(--success);
+            font-size: 1.2rem;
+        }
+
+        .option-btn.incorrect::after {
+            content: "×";
+            position: absolute;
+            right: 20px;
+            font-weight: bold;
+            color: var(--error);
+            font-size: 1.2rem;
+        }
+
+        /* Explanation Section */
+        .explanation-area {
+            margin-top: 25px;
+            padding: 20px;
+            background: var(--white);
+            border-radius: 12px;
+            border: 2px solid var(--secondary-light);
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .exp-header {
+            font-weight: bold;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+
+        .exp-detail {
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .option-feedbacks {
+            margin-top: 15px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        .option-fb-item {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            padding: 8px;
+            border-radius: 6px;
+            background: #f9f9f9;
+        }
+
+        .fb-marker {
+            display: inline-block;
+            width: 25px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .references {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+            font-size: 0.85rem;
+        }
+
+        .ref-link {
+            display: inline-flex;
+            align-items: center;
+            background: var(--secondary-light);
+            color: var(--secondary);
+            padding: 5px 12px;
+            border-radius: 15px;
+            text-decoration: none;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            transition: background 0.2s;
+            font-weight: bold;
+        }
+
+        .ref-link:hover {
+            background: #b2ebf2;
+        }
+
+        .next-btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: 50px;
+            margin-top: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(233, 30, 99, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Result Screen */
+        .result-summary {
+            text-align: center;
+            background: var(--white);
+            padding: 40px 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .score-display {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+
+        .review-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .review-item {
+            background: var(--white);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 6px solid var(--error);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .review-q {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .review-ans {
+            color: var(--error);
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .mode-select { grid-template-columns: 1fr;
+            }
+            .difficulty-selector { gap: 5px;
+            }
+            .diff-btn { padding: 8px 12px; font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>助産師国家試験対策</h1>
+        <h2>Expert Midwife & Programmer Edition</h2>
+    </header>
+
+    <div id="start-screen" class="screen active">
+        <div style="text-align:center; margin-bottom:20px;">
+            <p>難易度とコースを選んでスタートしてください。（全15問）</p>
+        </div>
+
+        <div class="difficulty-selector">
+            <label class="diff-label">
+                <input type="radio" name="difficulty" value="中級" checked>
+                <span class="diff-btn">中級</span>
+            </label>
+            <label class="diff-label">
+                <input type="radio" name="difficulty" value="上級">
+                <span class="diff-btn">上級</span>
+            </label>
+            <label class="diff-label">
+                <input type="radio" name="difficulty" value="鬼レベル">
+                <span class="diff-btn">鬼レベル</span>
+            </label>
+        </div>
+
+        <div class="mode-select">
+            <button class="btn" onclick="startQuiz('mixed')">総合演習 (Mix)</button>
+            <button class="btn secondary" onclick="startQuiz('助産管理')">助産管理コース</button>
+            <button class="btn secondary" onclick="startQuiz('遺伝子')">遺伝子コース</button>
+            <button class="btn secondary" onclick="startQuiz('超音波検査')">超音波検査コース</button>
+            <button class="btn secondary" onclick="startQuiz('周産期生理')">周産期生理コース</button>
+            <button class="btn secondary" onclick="startQuiz('新生児管理')">新生児管理コース</button>
+            <button class="btn secondary" onclick="startQuiz('産科合併症')">産科合併症コース</button>
+        </div>
+    </div>
+
+    <div id="quiz-screen" class="screen">
+        <div class="top-bar">
+            <span id="question-counter">Q 1 / 15</span>
+            <span id="score-counter">Score: 0</span>
+        </div>
+        <div class="progress-bar">
+            <div id="progress-fill" class="progress-fill"></div>
+        </div>
+
+        <div class="question-box">
+            <div class="badges">
+                <span id="q-genre" class="badge badge-genre">ジャンル</span>
+                <span id="q-diff" class="badge badge-diff">レベル</span>
+            </div>
+            <div id="q-text" class="question-text">ここに問題文が表示されます</div>
+        </div>
+
+        <div id="options-container" class="options-grid">
+        </div>
+
+        <div id="explanation-area" class="explanation-area">
+            <div class="exp-header">
+                <span id="result-icon"></span>
+                <span id="result-text"></span>
+            </div>
+            <div class="exp-detail">
+                <strong>【解説】</strong><br>
+                <span id="main-explanation"></span>
+            </div>
+
+            <div class="option-feedbacks" id="option-feedbacks">
+            </div>
+
+            <div class="references">
+                <strong>【Google検索で確認】</strong><br>
+                <div id="ref-links" style="margin-top:5px;"></div>
+            </div>
+
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()">次の問題へ</button>
+        </div>
+    </div>
+
+    <div id="result-screen" class="screen">
+        <div class="result-summary">
+            <h2>結果発表</h2>
+            <div class="score-display">
+                <span id="final-score">0</span> / <span id="total-count">15</span>
+            </div>
+            <p id="feedback-message">お疲れ様でした！</p>
+            <div style="margin-top:20px;">
+                <button class="btn" onclick="location.reload()">トップに戻る</button>
+            </div>
+        </div>
+
+        <h3>復習リスト（不正解の問題）</h3>
+        <ul id="review-list" class="review-list">
+        </ul>
+    </div>
+</div>
+
+<script>
+// --- 1. DATA: Question Database ---
+// difficulty: "中級", "鬼レベル"
+// keywords: Google検索用キーワード
+
+const questionDatabase = [
+    // === 助産管理 === (全15問)
+    {
+        id: 101, genre: "助産管理", difficulty: "中級",
+        question: "助産師の定義が規定されている法律はどれか。",
+        options: [
+            { text: "医療法", isCorrect: false, feedback: "医療提供体制を定める法律です。" },
+            { text: "保助看法", isCorrect: true, feedback: "保健師助産師看護師法第3条に規定されています。" },
+            { text: "母子保健法", isCorrect: false, feedback: "母性および乳幼児の健康保持・増進が目的です。" },
+            { text: "医師法", isCorrect: false, feedback: "医師の資格等を定める法律です。" }
+        ],
+        mainExplanation: "助産師の定義、資格、業務独占などは「保健師助産師看護師法」で規定されています。",
+        keywords: ["助産師 定義", "保健師助産師看護師法 第3条"]
+    },
+    {
+        id: 102, genre: "助産管理", difficulty: "鬼レベル", // 旧上級→鬼：法的な細かい要件のため
+        question: "助産所における嘱託医師・嘱託医療機関について誤っている記述はどれか。",
+        options: [
+            { text: "嘱託医師は産婦人科医でなければならない。", isCorrect: false, feedback: "正しい。原則として産婦人科医です。" },
+            { text: "嘱託医療機関は病院または診療所である。", isCorrect: false, feedback: "正しい。搬送先として確保が必要です。" },
+            { text: "嘱託医師は必ずしも近隣でなくてもよい。", isCorrect: true, feedback: "誤り（正解）。緊急時に対応できるよう、近隣である必要があります。" },
+            { text: "開設時に都道府県知事への届出が必要である。", isCorrect: false, feedback: "正しい。開設届出時に嘱託医等の記載が必要です。" }
+        ],
+        mainExplanation: "嘱託医師および嘱託医療機関は、緊急時に迅速な対応・搬送が可能であるよう、助産所の近隣に確保する必要があります。",
+        keywords: ["助産所 嘱託医師 要件", "医療法 第19条"]
+    },
+    {
+        id: 103, genre: "助産管理", difficulty: "鬼レベル",
+        question: "「院内助産」のシステム構築において、最も重視すべきリスクマネジメントの観点はどれか。",
+        options: [
+            { text: "助産師のみで完結する当直体制の確立", isCorrect: false, feedback: "医師との連携体制が前提であり、助産師のみでの完結を目的化するのは危険です。" },
+            { text: "対象者の選定（スクリーニング）基準の厳格化と遵守", isCorrect: true, feedback: "正解。ローリスク妊婦を正確に選別し、異常発生時に即座に医師へ移行する基準の遵守が安全の要です。" },
+            { text: "自然分娩率の向上を数値目標に掲げる", isCorrect: false, feedback: "数値目標の追求は、無理な分娩介助につながる恐れがあり、安全管理上不適切です。" },
+            { text: "分娩室のアメニティ向上", isCorrect: false, feedback: "満足度には寄与しますが、リスクマネジメントの最優先事項ではありません。" }
+        ],
+        mainExplanation: "院内助産や助産外来において最も重要なのは「正常と異常の境界」を見極めることであり、そのためのスクリーニング基準の作成と遵守が安全管理の核心です。",
+        keywords: ["院内助産 ガイドライン", "院内助産 リスクマネジメント", "助産業務ガイドライン スクリーニング"]
+    },
+    {
+        id: 104, genre: "助産管理", difficulty: "中級",
+        question: "助産師が「へその緒を切る」行為は、保健師助産師看護師法において何と規定されているか。",
+        options: [
+            { text: "助産師の業務ではない", isCorrect: false, feedback: "助産師の業務範囲に含まれます。" },
+            { text: "医師の指示に基づく助産行為", isCorrect: false, feedback: "医師の指示は不要です。" },
+            { text: "助産師の業務として行われる医行為", isCorrect: true, feedback: "助産師が正常な経過の分娩において、自らの判断で行える医行為です。" },
+            { text: "医療行為ではない", isCorrect: false, feedback: "医行為に分類されます。" }
+        ],
+        mainExplanation: "正常な経過の分娩における臍帯切断は、助産師が自らの判断と責任において実施できる医行為として認められています。",
+        keywords: ["助産師 臍帯切断", "助産師 医行為"]
+    },
+    {
+        id: 105, genre: "助産管理", difficulty: "中級", // 旧上級→中級：基本的な適応判断のため
+        question: "助産所における出産の対象とならないのはどれか。",
+        options: [
+            { text: "妊娠高血圧症候群と診断された妊婦", isCorrect: false, feedback: "ハイリスク妊娠であり、助産所での分娩はできません。" },
+            { text: "前回帝王切開既往があるが、今回は経腟分娩を希望する妊婦", isCorrect: false, feedback: "VBACは病院での管理が必要です。" },
+            { text: "多胎妊娠", isCorrect: false, feedback: "多胎妊娠はハイリスクであり、助産所での分娩はできません。" },
+            { text: "上記すべて", isCorrect: true, feedback: "これらはいずれも助産所の対象外です。助産所は正常分娩のみを扱います。" }
+        ],
+        mainExplanation: "助産所は、正常な妊娠・分娩・産褥経過が見込まれる女性のみを対象とします。リスクのあるケースは医療機関との連携が必要です。",
+        keywords: ["助産所 対象範囲", "助産所 リスク管理"]
+    },
+    {
+        id: 106, genre: "助産管理", difficulty: "鬼レベル",
+        question: "助産師が実施する新生児蘇生法（NCPR）について、AHA（アメリカ心臓協会）のガイドラインで推奨されている胸骨圧迫と人工呼吸の比率はどれか。",
+        options: [
+            { text: "15:2", isCorrect: false, feedback: "これは小児の心肺蘇生における比率です。" },
+            { text: "30:2", isCorrect: false, feedback: "これは成人の心肺蘇生における比率です。" },
+            { text: "3:1", isCorrect: true, feedback: "正解。新生児蘇生では、呼吸性要因が多いため、人工呼吸を重視し3:1の比率が推奨されます。" },
+            { text: "5:1", isCorrect: false, feedback: "これは特別な状況下での比率です。" }
+        ],
+        mainExplanation: "新生児蘇生においては、呼吸不全が主な原因であることが多いため、人工呼吸の重要性が高く、胸骨圧迫3回に対し人工呼吸1回の比率（3:1）が推奨されています。",
+        keywords: ["NCPR 胸骨圧迫 人工呼吸比率", "新生児蘇生ガイドライン"]
+    },
+    {
+        id: 107, genre: "助産管理", difficulty: "中級",
+        question: "助産師が分娩監視装置（CTG）を使用する目的として適切でないのはどれか。",
+        options: [
+            { text: "胎児心拍数陣痛図による胎児well-beingの評価", isCorrect: false, feedback: "主要な目的の一つです。" },
+            { text: "陣痛の頻度と持続時間の客観的把握", isCorrect: false, feedback: "外測陣痛計で陣痛を把握します。" },
+            { text: "分娩進行の客観的指標とする", isCorrect: true, feedback: "分娩進行は内診による子宮口開大度や児頭下降度で評価し、CTGは直接的な進行度を示すものではありません。" },
+            { text: "胎児仮死の早期発見", isCorrect: false, feedback: "胎児心拍数パターンから胎児仮死を疑う所見を早期に発見します。" }
+        ],
+        mainExplanation: "CTGは胎児の状態と陣痛の状況を把握するためのものであり、分娩進行そのものを直接的に評価するものではありません。",
+        keywords: ["分娩監視装置 目的", "CTG 胎児well-being"]
+    },
+    {
+        id: 108, genre: "助産管理", difficulty: "中級", // 旧上級→中級：臨床的な必須判断
+        question: "助産外来において、助産師が医師へのコンサルト（相談・依頼）を考慮すべき状況はどれか。",
+        options: [
+            { text: "妊娠37週で子宮口開大2cm、展退度50%の初産婦", isCorrect: false, feedback: "正常分娩に向けた自然な経過であり、直ちにコンサルトの必要はありません。" },
+            { text: "妊娠30週で切迫早産の診断を受けたが、現在症状が落ち着いている妊婦", isCorrect: false, feedback: "症状が落ち着いていれば、医師の管理下で助産師が継続ケアを行うこともあります。" },
+            { text: "妊娠28週の妊婦で、血圧が140/90mmHg以上が2回連続して測定された場合", isCorrect: true, feedback: "正解。妊娠高血圧症候群の疑いがあり、医師による評価が必要です。" },
+            { text: "妊娠40週で陣痛発来がなく、自然陣痛を待機している妊婦", isCorrect: false, feedback: "過期妊娠でなければ、自然陣痛を待機するのは正常な経過です。" }
+        ],
+        mainExplanation: "助産師は常に妊婦の安全を最優先し、異常の兆候が見られた場合は速やかに医師へコンサルトし、適切な医療介入につなげる必要があります。",
+        keywords: ["助産外来 医師へのコンサルト", "ハイリスク妊娠 助産師"]
+    },
+    {
+        id: 109, genre: "助産管理", difficulty: "中級", // 旧鬼レベル→中級：概念自体は基本
+        question: "助産師がインフォームドコンセント（説明と同意）を得る際に、特に留意すべき事項はどれか。",
+        options: [
+            { text: "簡潔に説明し、同意書に速やかにサインしてもらう", isCorrect: false, feedback: "理解を深めるための十分な時間と情報提供が必要です。" },
+            { text: "専門用語を多用し、助産師の専門性を示す", isCorrect: false, feedback: "分かりやすい言葉で説明し、妊産婦が理解できることが重要です。" },
+            { text: "複数の選択肢がある場合は、助産師が最良と考える選択肢のみを提示する", isCorrect: false, feedback: "複数の選択肢とそのメリット・デメリットを提示し、自己決定を支援します。" },
+            { text: "妊産婦の理解度を確認しながら、質問しやすい雰囲気を作る", isCorrect: true, feedback: "正解。妊産婦が十分に理解し、納得して選択できるよう、コミュニケーションを重視します。" }
+        ],
+        mainExplanation: "インフォームドコンセントは、妊産婦が自らの意思で医療行為を選択するための重要なプロセスです。助産師は、情報の提供だけでなく、その理解を支援し、自己決定を尊重する姿勢が求められます。",
+        keywords: ["インフォームドコンセント 助産師", "妊産婦 自己決定支援"]
+    },
+    {
+        id: 110, genre: "助産管理", difficulty: "中級",
+        question: "助産師の業務内容として、単独で行うことができないのはどれか。",
+        options: [
+            { text: "妊娠中の保健指導", isCorrect: false, feedback: "助産師が単独で行える業務です。" },
+            { text: "正常分娩の介助", isCorrect: false, feedback: "助産師の主要な業務であり、単独で行えます。" },
+            { text: "新生児の健康診査", isCorrect: false, feedback: "助産師が単独で行える業務です。" },
+            { text: "帝王切開術の実施", isCorrect: true, feedback: "正解。帝王切開術は医師の業務であり、助産師は行えません。" }
+        ],
+        mainExplanation: "助産師は正常な妊娠・分娩・産褥の管理、新生児のケア、保健指導を自らの判断で行えますが、帝王切開などの手術や異常時の医療行為は医師の業務です。",
+        keywords: ["助産師 業務範囲", "保健師助産師看護師法 業務"]
+    },
+    {
+        id: 111, genre: "助産管理", difficulty: "中級", // 旧上級→中級：基本手技
+        question: "助産師が行う会陰保護の目的として最も重要なのはどれか。",
+        options: [
+            { text: "分娩時間の短縮", isCorrect: false, feedback: "会陰保護は分娩時間の短縮を目的としません。" },
+            { text: "会陰裂傷の防止または最小化", isCorrect: true, feedback: "正解。会陰保護の主要な目的は、裂傷を防ぎ、母体の回復を促すことです。" },
+            { text: "胎児の娩出をスムーズにする", isCorrect: false, feedback: "胎児の娩出は母体のいきみと子宮収縮によります。" },
+            { text: "分娩時の出血量の減少", isCorrect: false, feedback: "出血量減少に直接寄与するわけではありません。" }
+        ],
+        mainExplanation: "会陰保護は、会陰部の組織が無理なく伸展するよう支持し、裂傷を防止または最小限に抑えることで、母体の回復を促進し、産後の合併症リスクを低減します。",
+        keywords: ["会陰保護 目的", "助産師 会陰裂傷"]
+    },
+    {
+        id: 112, genre: "助産管理", difficulty: "中級", // 旧鬼レベル→中級：倫理の基本
+        question: "助産師の倫理綱領において、最も基本的かつ重要な原則はどれか。",
+        options: [
+            { text: "医療経済効率の最大化", isCorrect: false, feedback: "倫理綱領の直接的な原則ではありません。" },
+            { text: "科学的根拠に基づいた医療の実践", isCorrect: false, feedback: "重要ですが、最も基本的な原則ではありません。" },
+            { text: "対象者の自己決定権の尊重", isCorrect: true, feedback: "正解。自律性の尊重は、助産ケアの根幹をなす倫理原則です。" },
+            { text: "助産師の専門性の維持・向上", isCorrect: false, feedback: "重要ですが、対象者への原則ではありません。" }
+        ],
+        mainExplanation: "助産師の倫理綱領では、対象者（妊産褥婦とその家族）の尊厳と自己決定権の尊重が最も基本的な原則とされています。これはインフォームドコンセントの根拠にもなります。",
+        keywords: ["助産師 倫理綱領", "自己決定権 尊重"]
+    },
+    {
+        id: 113, genre: "助産管理", difficulty: "中級",
+        question: "助産師の継続教育における目的として適切でないのはどれか。",
+        options: [
+            { text: "最新の知識・技術の習得", isCorrect: false, feedback: "適切です。" },
+            { text: "専門職としての質の維持・向上", isCorrect: false, feedback: "適切です。" },
+            { text: "助産師の業務独占の拡大", isCorrect: true, feedback: "正解。業務独占の拡大は継続教育の直接的な目的ではありません。" },
+            { text: "対象者への安全で質の高いケアの提供", isCorrect: false, feedback: "適切です。" }
+        ],
+        mainExplanation: "助産師の継続教育は、助産ケアの質と安全性を高め、専門職としての責任を果たすことを目的としています。業務独占の拡大は、法改正などによって検討されるものであり、継続教育の直接的な目的ではありません。",
+        keywords: ["助産師 継続教育", "助産師の役割"]
+    },
+    {
+        id: 114, genre: "助産管理", difficulty: "中級", // 旧上級→中級：基本姿勢
+        question: "助産師が育児支援を行う上で、特に注意すべきことはどれか。",
+        options: [
+            { text: "自身の育児経験を前面に出してアドバイスする", isCorrect: false, feedback: "個人の経験は参考になることもありますが、普遍的なアドバイスとは限りません。押し付けにならないよう注意が必要です。" },
+            { text: "母親の育児方法を否定せず、自己肯定感を高める支援をする", isCorrect: true, feedback: "正解。母親の自己肯定感を尊重し、個別性に合わせた支援が重要です。" },
+            { text: "専門用語を多用し、知識の豊富さを示す", isCorrect: false, feedback: "分かりやすい言葉で、相手の理解度に合わせて説明することが大切です。" },
+            { text: "育児の悩みはすべて助産師が解決すべきと考える", isCorrect: false, feedback: "助産師は支援者であり、すべての問題を解決するのではなく、母親が自ら解決できる力を引き出すことが重要です。" }
+        ],
+        mainExplanation: "育児支援において、助産師は母親の主体性を尊重し、自己肯定感を育むような関わりが求められます。一方的な指導ではなく、傾聴と共感に基づいた支援が重要です。",
+        keywords: ["助産師 育児支援", "母親の自己肯定感"]
+    },
+    {
+        id: 115, genre: "助産管理", difficulty: "中級", // 旧鬼レベル→中級：チーム医療の基本
+        question: "助産師の多職種連携において、最も効果的な連携を阻害する要因はどれか。",
+        options: [
+            { text: "明確な役割分担と責任範囲の規定", isCorrect: false, feedback: "これは効果的な連携を促進する要因です。" },
+            { text: "定期的な情報共有とカンファレンスの実施", isCorrect: false, feedback: "これは効果的な連携を促進する要因です。" },
+            { text: "職種間の専門性への理解不足と相互不信", isCorrect: true, feedback: "正解。職種間の理解不足や不信感は、円滑な連携を阻害する最大の要因となります。" },
+            { text: "共通の目標設定と達成への意識共有", isCorrect: false, feedback: "これは効果的な連携を促進する要因です。" }
+        ],
+        mainExplanation: "多職種連携を円滑に進めるためには、各職種の専門性を理解し尊重すること、そして相互の信頼関係を構築することが不可欠です。職種間の壁や偏見は、連携を阻害する大きな要因となります。",
+        keywords: ["助産師 多職種連携", "チーム医療 阻害要因"]
+    },
+
+    // === 遺伝子 === (全15問)
+
+    {
+        id: 201, genre: "遺伝子", difficulty: "中級",
+        question: "ダウン症候群で最も頻度の高い核型はどれか。",
+        options: [
+            { text: "標準型21トリソミー", isCorrect: true, feedback: "ダウン症候群の約95%を占めます。" },
+            { text: "転座型", isCorrect: false, feedback: "約3〜4%です。" },
+            { text: "モザイク型", isCorrect: false, feedback: "約1〜2%と稀です。" },
+            { text: "18トリソミー", isCorrect: false, feedback: "これはエドワーズ症候群です。" }
+        ],
+        mainExplanation: "ダウン症候群の大部分は、生殖細胞形成時の染色体不分離による「標準型21トリソミー」です。",
+        keywords: ["ダウン症候群 核型 頻度", "標準型21トリソミー"]
+    },
+    {
+        id: 202, genre: "遺伝子", difficulty: "鬼レベル", // 旧上級→鬼：遺伝形式の深い理解が必要
+        question: "X連鎖劣性遺伝（潜性遺伝）について正しいのはどれか。",
+        options: [
+            { text: "父親が患者の場合、男児は50%で発症する。", isCorrect: false, feedback: "父親のX染色体は女児にのみ受け継がれるため、男児は発症しません。" },
+            { text: "母親が保因者の場合、女児は50%で保因者になるが、発症は稀である。", isCorrect: true, feedback: "正解。女児は50%で保因者になりますが、発症は稀です。" },
+            { text: "男性の発症者が女性より少ない。", isCorrect: false, feedback: "男性はX染色体が1本しかないため、変異があると必ず発症し、女性より発症者が多くなります。" },
+            { text: "世代を飛ばさずに連続して発症する。", isCorrect: false, feedback: "保因者の女性を通じて世代を飛ばす（隔世遺伝）ように見えるのが特徴です。" }
+        ],
+        mainExplanation: "X連鎖劣性遺伝（血友病、デュシェンヌ型筋ジストロフィーなど）は、X染色体を1本しか持たない男性に重篤な症状が出やすく、女性は保因者となることが多いです。",
+        keywords: ["X連鎖劣性遺伝 特徴", "血友病 遺伝形式"]
+    },
+    {
+        id: 203, genre: "遺伝子", difficulty: "鬼レベル",
+        question: "NIPT（非侵襲的出生前遺伝学的検査）において、陽性的中率に最も大きく影響を与える因子はどれか。",
+        options: [
+            { text: "母体年齢（対象疾患の有病率）", isCorrect: true, feedback: "正解。検査の感度・特異度が同じでも、母体年齢上昇に伴い有病率が上がると陽性的中率は劇的に上昇します。" },
+            { text: "胎児の性別", isCorrect: false, feedback: "性別は異数性検査の的中率に直接的な大きな影響を与えません。" },
+            { text: "妊娠週数（10週以降）", isCorrect: false, feedback: "cfDNA濃度には影響しますが、週数自体よりも有病率（年齢）の影響の方が統計的に大きいです。" },
+            { text: "母体の体重", isCorrect: false, feedback: "肥満はcfDNA濃度低下の原因になりますが、陽性的中率への影響因子としては年齢が支配的です。" }
+        ],
+        mainExplanation: "ベイズの定理により、事前確率（この場合は母体年齢による染色体異常の有病率）が低いと、たとえ検査精度が高くても陽性的中率は低くなります。これが若年者へのNIPT推奨が慎重である理由の一つです。",
+        keywords: ["NIPT 陽性的中率 母体年齢", "ベイズの定理 感度 特異度"]
+    },
+    {
+        id: 204, genre: "遺伝子", difficulty: "中級",
+        question: "常染色体優性遺伝病の特徴として誤っているのはどれか。",
+        options: [
+            { text: "男女の発症頻度に差がない。", isCorrect: false, feedback: "正しい。常染色体上の遺伝子であるため、性差はありません。" },
+            { text: "患者の子の50%が発症する。", isCorrect: false, feedback: "正しい。片親がヘテロ接合体の場合、子の発症確率は50%です。" },
+            { text: "世代を飛ばして発症することが多い。", isCorrect: true, feedback: "誤り（正解）。優性遺伝は、患者が必ず親のどちらかから遺伝子を受け継ぐため、世代を飛ばさずに連続して発症します。" },
+            { text: "患者の親のどちらか一方は必ず患者である。", isCorrect: false, feedback: "正しい。新生突然変異の場合を除けば、この特徴があります。" }
+        ],
+        mainExplanation: "常染色体優性遺伝は、遺伝子変異が1コピーあれば発症するため、通常は世代を飛ばさずに連続して発症する特徴があります。",
+        keywords: ["常染色体優性遺伝 特徴", "遺伝形式"]
+    },
+    {
+        id: 205, genre: "遺伝子", difficulty: "中級", // 旧上級→中級：カウンセリングの基本
+        question: "遺伝カウンセリングにおいて、ノンディレクティブカウンセリングの原則に最も合致するのはどれか。",
+        options: [
+            { text: "カウンセラーが最適な選択肢を提示し、決断を促す。", isCorrect: false, feedback: "ディレクティブなアプローチです。" },
+            { text: "クライエントが自らの価値観に基づき、自己決定できるよう支援する。", isCorrect: true, feedback: "正解。カウンセラーは情報提供に徹し、クライエントの意思決定を尊重します。" },
+            { text: "医学的な見地から、クライエントにとって最も有利な選択肢を強く推奨する。", isCorrect: false, feedback: "これもディレクティブなアプローチです。" },
+            { text: "クライエントの不安を解消するため、特定の検査や治療を積極的に勧める。", isCorrect: false, feedback: "ノンディレクティブとは異なります。" }
+        ],
+        mainExplanation: "ノンディレクティブカウンセリングは、クライエントが自らの意思で情報を整理し、自己決定を下せるように、中立的な立場から支援することを目的とします。",
+        keywords: ["遺伝カウンセリング ノンディレクティブ", "自己決定支援"]
+    },
+    {
+        id: 206, genre: "遺伝子", difficulty: "鬼レベル",
+        question: "遺伝子変異が、メチル化などのエピジェネティックな修飾によって表現型に影響を与える現象はどれか。",
+        options: [
+            { text: "多因子遺伝", isCorrect: false, feedback: "複数の遺伝子と環境要因が関与する遺伝形式です。" },
+            { text: "ミトコンドリア遺伝", isCorrect: false, feedback: "ミトコンドリアDNAの異常による遺伝です。" },
+            { text: "インプリンティング", isCorrect: true, feedback: "正解。親由来の遺伝子の発現がエピジェネティックに制御される現象です。" },
+            { text: "モザイク現象", isCorrect: false, feedback: "一つの個体内に遺伝的に異なる複数の細胞系統が存在する現象です。" }
+        ],
+        mainExplanation: "ゲノムインプリンティングは、親から受け継いだ遺伝子のどちらか一方のみが発現する現象で、DNAメチル化などのエピジェネティック修飾によって制御されます。",
+        keywords: ["ゲノムインプリンティング", "エピジェネティクス 遺伝"]
+    },
+    {
+        id: 207, genre: "遺伝子", difficulty: "中級",
+        question: "新生児スクリーニング検査で発見される疾患のうち、遺伝性代謝疾患に分類されるのはどれか。",
+        options: [
+            { text: "先天性甲状腺機能低下症", isCorrect: false, feedback: "内分泌疾患です。" },
+            { text: "フェニルケトン尿症", isCorrect: true, feedback: "正解。アミノ酸代謝異常症の一つです。" },
+            { text: "先天性副腎過形成症", isCorrect: false, feedback: "内分泌疾患です。" },
+            { text: "神経芽細胞腫", isCorrect: false, feedback: "小児がんです。" }
+        ],
+        mainExplanation: "フェニルケトン尿症は、アミノ酸の一種であるフェニルアラニンを代謝する酵素が欠損しているために起こる遺伝性の代謝疾患です。",
+        keywords: ["新生児スクリーニング 遺伝性代謝疾患", "フェニルケトン尿症"]
+    },
+    {
+        id: 208, genre: "遺伝子", difficulty: "中級", // 旧上級→中級：基本的な核型知識
+        question: "ターナー症候群の核型で最も多いのはどれか。",
+        options: [
+            { text: "47,XXY", isCorrect: false, feedback: "これはクラインフェルター症候群の核型です。" },
+            { text: "45,X", isCorrect: true, feedback: "正解。X染色体のモノソミーが最も多いです。" },
+            { text: "47,XXX", isCorrect: false, feedback: "トリプルX症候群の核型です。" },
+            { text: "47,XY,+21", isCorrect: false, feedback: "男性のダウン症候群の核型です。" }
+        ],
+        mainExplanation: "ターナー症候群は女性にのみ発症し、X染色体が1本しかない（モノソミーX）ことが特徴です。",
+        keywords: ["ターナー症候群 核型", "モノソミーX"]
+    },
+    {
+        id: 209, genre: "遺伝子", difficulty: "鬼レベル",
+        question: "遺伝子治療の種類のうち、生殖細胞系列遺伝子治療の倫理的課題として最も重要なのはどれか。",
+        options: [
+            { text: "治療効果が一時的であること", isCorrect: false, feedback: "これは体細胞遺伝子治療にも当てはまる課題ですが、最も重要ではありません。" },
+            { text: "高額な治療費がかかること", isCorrect: false, feedback: "これも重要な課題ですが、生殖細胞系列に特有の倫理的課題ではありません。" },
+            { text: "次世代に遺伝子改変が継承されること", isCorrect: true, feedback: "正解。子孫に影響が及ぶため、倫理的に非常に慎重な議論が必要です。" },
+            { text: "ウイルスベクターによる免疫反応のリスク", isCorrect: false, feedback: "これも遺伝子治療全般のリスクですが、倫理的課題とは異なります。" }
+        ],
+        mainExplanation: "生殖細胞系列遺伝子治療は、治療を受けた個体だけでなく、その子孫にも遺伝子改変が継承されるため、その影響の予測不能性や人類の遺伝子プールへの影響など、極めて重大な倫理的課題を抱えています。",
+        keywords: ["生殖細胞系列遺伝子治療 倫理", "遺伝子治療 倫理的課題"]
+    },
+    {
+        id: 210, genre: "遺伝子", difficulty: "中級", // 旧中級のまま：メンデル遺伝の基礎
+        question: "常染色体劣性遺伝病で、患者の子孫に遺伝病が発現する確率が最も高いのはどれか。",
+        options: [
+            { text: "患者と健常者（保因者ではない）の子", isCorrect: false, feedback: "すべて保因者となり、発症はしません。" },
+            { text: "患者と保因者の子", isCorrect: true, feedback: "正解。50%の確率で患者、50%の確率で保因者となります。" },
+            { text: "保因者同士の子", isCorrect: false, feedback: "25%の確率で患者、50%の確率で保因者、25%の確率で健常者となります。" },
+            { text: "患者同士の子", isCorrect: false, feedback: "すべて患者となりますが、選択肢の中で最も高いわけではありません。" }
+        ],
+        mainExplanation: "常染色体劣性遺伝では、両親から異常遺伝子を受け継いだ場合に発症します。患者と保因者の間の子供は、50%の確率で発症します。",
+        keywords: ["常染色体劣性遺伝 遺伝確率", "遺伝カウンセリング"]
+    },
+    {
+        id: 211, genre: "遺伝子", difficulty: "鬼レベル", // 旧上級→鬼：専門用語VUS
+        question: "遺伝子検査の結果、VUS（Variant of Uncertain Significance）と判定された場合の説明として最も適切なのはどれか。",
+        options: [
+            { text: "将来的に必ず発症するが、時期は不明である。", isCorrect: false, feedback: "VUSは病原性が確定していない変異であり、必ず発症するとは限りません。" },
+            { text: "病原性が不明な変異であり、現時点では疾患との関連を断定できない。", isCorrect: true, feedback: "正解。VUSは臨床的意義が不明な変異を指します。" },
+            { text: "良性変異であり、疾患発症のリスクはない。", isCorrect: false, feedback: "良性変異とは異なり、将来的に病原性が判明する可能性もあります。" },
+            { text: "疾患発症のリスクが非常に高いため、予防的治療を推奨する。", isCorrect: false, feedback: "病原性が不明なため、予防的治療を推奨することはできません。" }
+        ],
+        mainExplanation: "VUS（Variant of Uncertain Significance）は、遺伝子変異があるものの、それが疾患の原因となる病原性変異なのか、あるいは無害な多型なのかが現在の科学的知見では判断できない場合に用いられます。",
+        keywords: ["VUS 遺伝子検査", "臨床的意義不明の変異"]
+    },
+    {
+        id: 212, genre: "遺伝子", difficulty: "鬼レベル",
+        question: "着床前診断（PGT）の種類のうち、染色体異数性を検出する目的で行われるのはどれか。",
+        options: [
+            { text: "PGT-M (monogenic/single gene defects)", isCorrect: false, feedback: "単一遺伝子疾患の検出が目的です。" },
+            { text: "PGT-SR (structural chromosomal rearrangements)", isCorrect: false, feedback: "染色体構造異常の検出が目的です。" },
+            { text: "PGT-A (aneuploidy)", isCorrect: true, feedback: "正解。染色体異数性（数的異常）の検出が目的です。" },
+            { text: "PGT-HLA (HLA matching)", isCorrect: false, feedback: "HLA適合胚の選択が目的です。" }
+        ],
+        mainExplanation: "着床前診断（PGT）は、体外受精で得られた胚の遺伝子・染色体異常を調べる検査です。PGT-Aは、ダウン症候群などの染色体異数性（数的異常）を検出するために行われます。",
+        keywords: ["着床前診断 PGT-A", "染色体異数性 検出"]
+    },
+    {
+        id: 213, genre: "遺伝子", difficulty: "中級", // 旧中級のまま：BRCAは有名
+        question: "遺伝性乳がん卵巣がん症候群（HBOC）の原因遺伝子として最も代表的なのはどれか。",
+        options: [
+            { text: "CFTR遺伝子", isCorrect: false, feedback: "嚢胞性線維症の原因遺伝子です。" },
+            { text: "FBN1遺伝子", isCorrect: false, feedback: "マルファン症候群の原因遺伝子です。" },
+            { text: "BRCA1/2遺伝子", isCorrect: true, feedback: "正解。HBOCの主要な原因遺伝子です。" },
+            { text: "Huntingtin遺伝子", isCorrect: false, feedback: "ハンチントン病の原因遺伝子です。" }
+        ],
+        mainExplanation: "遺伝性乳がん卵巣がん症候群（HBOC）は、BRCA1またはBRCA2遺伝子の病的バリアント（変異）によって引き起こされ、乳がんや卵巣がんのリスクを高めます。",
+        keywords: ["HBOC 原因遺伝子", "BRCA1 BRCA2"]
+    },
+    {
+        id: 214, genre: "遺伝子", difficulty: "鬼レベル", // 旧上級→鬼：先端医療知識
+        question: "遺伝子疾患の治療法の一つである「遺伝子治療」について、現在最も臨床応用が進んでいる方法はどれか。",
+        options: [
+            { text: "ゲノム編集による生殖細胞系列の改変", isCorrect: false, feedback: "倫理的課題が多く、臨床応用には至っていません。" },
+            { text: "ウイルスベクターを用いた体細胞遺伝子導入", isCorrect: true, feedback: "正解。欠損遺伝子の補充などで多くの臨床研究・応用が行われています。" },
+            { text: "クローン技術による患者個体の作成", isCorrect: false, feedback: "遺伝子治療とは異なります。" },
+            { text: "mRNAワクチンによる遺伝子発現制御", isCorrect: false, feedback: "mRNAワクチンは感染症予防が主目的であり、遺伝子治療とは異なります。" }
+        ],
+        mainExplanation: "遺伝子治療は、疾患の原因となる遺伝子の異常を修正したり、新たな遺伝子を導入したりすることで治療を目指すものです。現在、ウイルスベクターを用いた体細胞遺伝子導入が最も臨床応用が進んでおり、一部の難病で承認されています。",
+        keywords: ["遺伝子治療 臨床応用", "ウイルスベクター 遺伝子導入"]
+    },
+    {
+        id: 215, genre: "遺伝子", difficulty: "鬼レベル",
+        question: "染色体検査において、G-バンド法で検出できる異常の最小サイズはどの程度か。",
+        options: [
+            { text: "数塩基対の点変異", isCorrect: false, feedback: "これはシークエンス解析で検出されます。" },
+            { text: "数キロ塩基対の欠失・重複", isCorrect: false, feedback: "これはFISH法やマイクロアレイで検出されます。" },
+            { text: "数メガ塩基対の欠失・重複", isCorrect: true, feedback: "正解。G-バンド法は比較的大きな染色体構造異常を検出できます。" },
+            { text: "染色体全体の数的異常のみ", isCorrect: false, feedback: "数的異常だけでなく、大きな構造異常も検出可能です。" }
+        ],
+        mainExplanation: "G-バンド法は、光学顕微鏡で染色体パターンを観察する方法であり、数メガ塩基対以上の比較的大きな染色体構造異常（欠失、重複、転座など）や数的異常を検出するのに適しています。",
+        keywords: ["Gバンド法 検出限界", "染色体検査"]
+    },
+
+
+    // === 超音波検査 === (全15問)
+
+    {
+        id: 301, genre: "超音波検査", difficulty: "中級",
+        question: "妊娠初期の超音波検査で、分娩予定日決定に最も適している指標はどれか。",
+        options: [
+            { text: "GS (胎嚢)", isCorrect: false, feedback: "個体差が大きいです。" },
+            { text: "CRL (頭殿長)", isCorrect: true, feedback: "8〜10週のCRLが最も誤差が少ないです。" },
+            { text: "BPD (児頭大横径)", isCorrect: false, feedback: "妊娠中期以降の指標です。" },
+            { text: "FL (大腿骨長)", isCorrect: false, feedback: "妊娠中期以降の指標です。" }
+        ],
+        mainExplanation: "妊娠8〜10週のCRL（頭殿長）による予定日修正は、最も精度が高いとされています。",
+        keywords: ["分娩予定日 決定 CRL", "妊娠初期 超音波検査"]
+    },
+    {
+        id: 302, genre: "超音波検査", difficulty: "鬼レベル", // 旧上級→鬼：特異的所見の暗記
+        question: "胎児超音波スクリーニングにおいて「double bubble sign」が示唆する疾患はどれか。",
+        options: [
+            { text: "食道閉鎖", isCorrect: false, feedback: "胃泡が見えない、あるいは羊水過多などが特徴です。" },
+            { text: "十二指腸閉鎖", isCorrect: true, feedback: "正解。胃泡と拡張した十二指腸球部が並んで見える像です。" },
+            { text: "横隔膜ヘルニア", isCorrect: false, feedback: "胃泡が胸腔内に見えるなどが特徴です。" },
+            { text: "水頭症", isCorrect: false, feedback: "脳室拡大などが見られます。" }
+        ],
+        mainExplanation: "Double bubble sign（二重泡像）は、十二指腸閉鎖症に特異的な所見です。ダウン症候群の合併率が高いことでも知られます。",
+        keywords: ["double bubble sign 胎児エコー", "十二指腸閉鎖 超音波"]
+    },
+    {
+        id: 303, genre: "超音波検査", difficulty: "鬼レベル",
+        question: "胎児ドプラ検査において、胎児貧血（重度）が疑われる場合の所見として正しいのはどれか。",
+        options: [
+            { text: "臍帯動脈(UA)の血流途絶", isCorrect: false, feedback: "これは胎盤機能不全やIUGRで認められる所見です。" },
+            { text: "中大脳動脈(MCA)の最高血流速度(PSV)上昇", isCorrect: true, feedback: "正解。貧血による血液粘度低下と心拍出量増加により、脳血流速度が上昇します(>1.5MoM)。" },
+            { text: "静脈管(DV)の逆流", isCorrect: false, feedback: "これは心不全や低酸素状態の末期的な所見です。" },
+            { text: "子宮動脈の拡張期ノッチ残存", isCorrect: false, feedback: "これは妊娠高血圧腎症のリスク因子です。" }
+        ],
+        mainExplanation: "胎児貧血（パルボウイルス感染や血液型不適合など）では、血液の粘稠度が下がり、代償的に循環量が増えるため、中大脳動脈の収縮期最高血流速度（MCA-PSV）が上昇します。",
+        keywords: ["胎児貧血 ドプラ MCA-PSV", "中大脳動脈最高血流速度"]
+    },
+    {
+        id: 304, genre: "超音波検査", difficulty: "中級",
+        question: "胎児の超音波検査で、羊水量の評価に用いられる指標はどれか。",
+        options: [
+            { text: "BPD (児頭大横径)", isCorrect: false, feedback: "胎児の発育指標です。" },
+            { text: "FL (大腿骨長)", isCorrect: false, feedback: "胎児の発育指標です。" },
+            { text: "AFI (羊水インデックス)", isCorrect: true, feedback: "正解。子宮を4分割し、それぞれの最大羊水深度の合計で評価します。" },
+            { text: "AC (腹囲)", isCorrect: false, feedback: "胎児の発育指標です。" }
+        ],
+        mainExplanation: "羊水量は胎児の腎機能や消化管機能、胎盤機能などを反映するため、AFI（羊水インデックス）やMVP（最大羊水深度）で評価されます。",
+        keywords: ["羊水量評価 AFI", "羊水インデックス"]
+    },
+    {
+        id: 305, genre: "超音波検査", difficulty: "中級", // 旧上級→中級：IUGRは頻出
+        question: "子宮内胎児発育遅延 (IUGR) の診断において、超音波検査で重視される項目として最も適切なのはどれか。",
+        options: [
+            { text: "胎児性別", isCorrect: false, feedback: "IUGRの診断には直接関係ありません。" },
+            { text: "臍帯動脈のドプラ波形異常 (PI上昇)", isCorrect: true, feedback: "正解。胎盤機能不全を示唆し、IUGRの重要な所見です。" },
+            { text: "胎児の呼吸様運動の有無", isCorrect: false, feedback: "バイオフィジカルプロファイルの項目ですが、IUGRの診断そのものではありません。" },
+            { text: "羊水過多", isCorrect: false, feedback: "羊水過多はIUGRとは逆の所見です。" }
+        ],
+        mainExplanation: "IUGRの診断では、胎児発育指標の他にも、胎盤機能不全を示す臍帯動脈の脈流抵抗指数（PI）の上昇やAREDV（拡張期血流途絶・逆流）などが重視されます。",
+        keywords: ["IUGR 超音波診断", "臍帯動脈ドプラ IUGR"]
+    },
+    {
+        id: 306, genre: "超音波検査", difficulty: "鬼レベル",
+        question: "胎児の先天性心疾患スクリーニングにおいて、4腔断面図で確認すべき構造として誤っているのはどれか。",
+        options: [
+            { text: "心臓の軸偏位", isCorrect: false, feedback: "心臓の軸偏位は重要な所見です。" },
+            { text: "左右の心室・心房の大きさの対称性", isCorrect: false, feedback: "左右差の有無は重要です。" },
+            { text: "大血管の交差（大動脈と肺動脈）", isCorrect: true, feedback: "誤り（正解）。大血管の交差は4腔断面図では評価できません。流出路断面図で評価します。" },
+            { text: "房室弁の付着位置と開閉", isCorrect: false, feedback: "弁の異常は重要な所見です。" }
+        ],
+        mainExplanation: "4腔断面図は、心臓の4つの部屋（2心房2心室）と房室弁の形態、心軸などを評価しますが、大血管の走行は流出路断面図（LVOT, RVOT）で評価します。",
+        keywords: ["胎児心疾患スクリーニング 4腔断面", "大血管交差 超音波"]
+    },
+    {
+        id: 307, genre: "超音波検査", difficulty: "中級",
+        question: "超音波検査で妊娠週数を推定する際、妊娠初期に最も誤差が少ないのは次のうちどれか。",
+        options: [
+            { text: "BPD（児頭大横径）", isCorrect: false, feedback: "妊娠中期以降の指標です。" },
+            { text: "FL（大腿骨長）", isCorrect: false, feedback: "妊娠中期以降の指標です。" },
+            { text: "GS（胎嚢径）", isCorrect: false, feedback: "個体差が大きく、誤差が大きいです。" },
+            { text: "CRL（頭殿長）", isCorrect: true, feedback: "正解。胎児の成長が均一な妊娠初期に最も正確な週数推定が可能です。" }
+        ],
+        mainExplanation: "妊娠初期（特に7～10週）のCRL（頭殿長）は、胎児の成長に個体差が少ないため、最も正確に妊娠週数を推定できる指標です。",
+        keywords: ["超音波 妊娠週数推定", "CRL 妊娠初期"]
+    },
+    {
+        id: 308, genre: "超音波検査", difficulty: "中級", // 旧上級→中級：前置胎盤は必須知識
+        question: "前置胎盤の診断において、超音波検査で確認すべき最も重要な所見はどれか。",
+        options: [
+            { text: "胎盤の厚さ", isCorrect: false, feedback: "胎盤の厚さは前置胎盤の診断に直接関係しません。" },
+            { text: "胎児の向き", isCorrect: false, feedback: "胎児の向きは分娩様式に関わりますが、前置胎盤の診断ではありません。" },
+            { text: "内子宮口と胎盤の位置関係", isCorrect: true, feedback: "正解。胎盤が内子宮口を覆っているかどうかが前置胎盤の診断基準です。" },
+            { text: "臍帯の付着部位", isCorrect: false, feedback: "臍帯の付着部位は前置胎盤と関連することもありますが、直接の診断基準ではありません。" }
+        ],
+        mainExplanation: "前置胎盤は、胎盤が子宮下部に付着し、内子宮口を覆っている状態を指します。超音波検査で内子宮口と胎盤の位置関係を確認することが診断に不可欠です。",
+        keywords: ["前置胎盤 超音波診断", "内子宮口 胎盤"]
+    },
+    {
+        id: 309, genre: "超音波検査", difficulty: "鬼レベル",
+        question: "胎児水腫の診断基準として、超音波検査で確認される所見として最も適切なのはどれか。",
+        options: [
+            { text: "単一の体腔液貯留", isCorrect: false, feedback: "胎児水腫は複数の体腔液貯留を特徴とします。" },
+            { text: "羊水過少", isCorrect: false, feedback: "羊水過少は胎児水腫の所見ではありません。むしろ羊水過多を伴うことがあります。" },
+            { text: "最低でも2つ以上の体腔液貯留 (胸水、腹水、心嚢液、皮膚浮腫など)", isCorrect: true, feedback: "正解。胎児水腫は、複数の体腔に異常な液貯留がある状態を指します。" },
+            { text: "胎児の体重が妊娠週数に比して著しく小さいこと", isCorrect: false, feedback: "これはIUGRの所見であり、胎児水腫とは異なります。" }
+        ],
+        mainExplanation: "胎児水腫は、胎児の全身に浮腫が見られる重篤な病態で、胸水、腹水、心嚢液、皮膚浮腫のうち2つ以上を認めることで診断されます。",
+        keywords: ["胎児水腫 超音波診断", "非免疫性胎児水腫"]
+    },
+    {
+        id: 310, genre: "超音波検査", difficulty: "中級",
+        question: "妊娠中期以降の超音波検査で、胎児の発育評価に用いられる主要な指標として誤っているのはどれか。",
+        options: [
+            { text: "BPD (児頭大横径)", isCorrect: false, feedback: "主要な指標の一つです。" },
+            { text: "FL (大腿骨長)", isCorrect: false, feedback: "主要な指標の一つです。" },
+            { text: "CRL (頭殿長)", isCorrect: true, feedback: "正解。CRLは妊娠初期の指標であり、中期以降は誤差が大きくなります。" },
+            { text: "AC (腹囲)", isCorrect: false, feedback: "主要な指標の一つです。" }
+        ],
+        mainExplanation: "妊娠中期以降の胎児発育評価には、BPD（児頭大横径）、FL（大腿骨長）、AC（腹囲）が主に用いられます。これらを組み合わせて推定体重（EFW）を算出します。",
+        keywords: ["胎児発育評価 超音波", "妊娠中期 超音波指標"]
+    },
+    {
+        id: 311, genre: "超音波検査", difficulty: "中級", // 旧上級→中級：AEDVは危険信号として必須
+        question: "臍帯ドプラ検査で、臍帯動脈の拡張期血流が消失（AEDV）または逆流（REDV）している場合、何を示唆しているか。",
+        options: [
+            { text: "胎児の成熟が促進されている", isCorrect: false, feedback: "これは胎児の状態が悪化していることを示します。" },
+            { text: "胎児が十分に栄養摂取できている", isCorrect: false, feedback: "これは胎盤機能不全を示唆します。" },
+            { text: "胎盤機能不全による胎児仮死のリスク増大", isCorrect: true, feedback: "正解。胎盤機能不全が重度であることを示し、胎児仮死のリスクが高い状態です。" },
+            { text: "胎児の心臓に異常がある", isCorrect: false, feedback: "心臓の異常とは直接関係ありません。" }
+        ],
+        mainExplanation: "臍帯動脈のAEDVやREDVは、胎盤の血管抵抗が著しく上昇していることを意味し、胎盤機能不全が重度であることを示します。これは胎児仮死のリスクが非常に高い状態であり、早急な対応が必要です。",
+        keywords: ["臍帯動脈 AEDV REDV", "胎盤機能不全 ドプラ"]
+    },
+    {
+        id: 312, genre: "超音波検査", difficulty: "鬼レベル",
+        question: "胎児の脳室拡大が疑われる場合、超音波検査で測定する最も重要な指標はどれか。",
+        options: [
+            { text: "BPD (児頭大横径)", isCorrect: false, feedback: "脳室拡大の直接的な指標ではありません。" },
+            { text: "側脳室後角幅", isCorrect: true, feedback: "正解。側脳室後角の幅が10mm以上で脳室拡大と診断されます。" },
+            { text: "小脳横径", isCorrect: false, feedback: "小脳の大きさを評価する指標です。" },
+            { text: "脳幹の長さ", isCorrect: false, feedback: "脳幹の長さは脳室拡大の指標ではありません。" }
+        ],
+        mainExplanation: "胎児の脳室拡大（水頭症）の診断には、側脳室後角の幅が最も重要な指標となります。10mm以上で脳室拡大と診断され、経過観察やさらなる精査が必要となります。",
+        keywords: ["胎児脳室拡大 超音波", "側脳室後角幅"]
+    },
+    {
+        id: 313, genre: "超音波検査", difficulty: "中級",
+        question: "経腟超音波検査が特に有用なのは、以下のどの状況か。",
+        options: [
+            { text: "妊娠後期における胎児発育評価", isCorrect: false, feedback: "主に経腹超音波で行われます。" },
+            { text: "子宮頸管長の測定と切迫早産の診断", isCorrect: true, feedback: "正解。子宮頸管長は経腟超音波で正確に測定できます。" },
+            { text: "胎児の心臓スクリーニング", isCorrect: false, feedback: "主に経腹超音波で行われます。" },
+            { text: "胎盤の位置確認（前置胎盤など）", isCorrect: false, feedback: "経腹超音波でも確認可能ですが、内子宮口との関係は経腟がより正確です。" }
+        ],
+        mainExplanation: "経腟超音波検査は、プローブが子宮頸部に近いため、子宮頸管長や内子宮口の状態をより詳細に評価でき、切迫早産のリスク評価に非常に有用です。",
+        keywords: ["経腟超音波検査 用途", "子宮頸管長測定"]
+    },
+    {
+        id: 314, genre: "超音波検査", difficulty: "鬼レベル", // 旧上級→鬼：週数限定の専門検査
+        question: "胎児の形態異常スクリーニングにおいて、NT（Nuchal Translucency：項部透過像）の測定が特に重要な時期はいつか。",
+        options: [
+            { text: "妊娠初期（5～7週）", isCorrect: false, feedback: "NT測定には早すぎます。" },
+            { text: "妊娠初期（11～13週）", isCorrect: true, feedback: "正解。この時期にNT測定が行われ、染色体異常のリスク評価に用いられます。" },
+            { text: "妊娠中期（20～24週）", isCorrect: false, feedback: "この時期は詳細な形態スクリーニングが行われますが、NT測定は適しません。" },
+            { text: "妊娠後期（30週以降）", isCorrect: false, feedback: "この時期は胎児発育やWell-being評価が主です。" }
+        ],
+        mainExplanation: "NT（項部透過像）は、胎児の首の後ろの皮下組織の厚みを測定するもので、妊娠11週0日から13週6日という限られた期間に、染色体異常（特にダウン症候群）のリスクを評価するために行われます。",
+        keywords: ["NT測定 時期", "項部透過像 染色体異常"]
+    },
+    {
+        id: 315, genre: "超音波検査", difficulty: "鬼レベル",
+        question: "胎児ドプラ検査における「脳血流再分配（Brain Sparing Effect）」について正しいのはどれか。",
+        options: [
+            { text: "胎児の心臓機能が亢進している状態を示す。", isCorrect: false, feedback: "これは胎児が低酸素状態にあることを示します。" },
+            { text: "中大脳動脈の抵抗指数（RI）が上昇し、臍帯動脈のRIが低下する。", isCorrect: false, feedback: "逆です。中大脳動脈のRIは低下し、臍帯動脈のRIは上昇します。" },
+            { text: "胎児が低酸素状態にあるため、脳への血流を優先している状態。", isCorrect: true, feedback: "正解。胎児が低酸素ストレスに曝されている場合に起こる適応反応です。" },
+            { text: "胎児の成長が促進されていることを示す。", isCorrect: false, feedback: "これはIUGRや胎児仮死のサインです。" }
+        ],
+        mainExplanation: "脳血流再分配（Brain Sparing Effect）は、胎児が低酸素状態に陥った際に、脳への血流を優先的に確保しようとする生体防御反応です。具体的には、中大脳動脈の抵抗指数（RI）が低下し、臍帯動脈のRIが上昇することで評価されます。",
+        keywords: ["脳血流再分配 ドプラ", "Brain Sparing Effect"]
+    },
+
+    // === 周産期生理 === (全15問)
+
+    {
+        id: 401, genre: "周産期生理", difficulty: "中級",
+        question: "妊娠中に増加するホルモンのうち、子宮収縮を抑制する作用があるのはどれか。",
+        options: [
+            { text: "オキシトシン", isCorrect: false, feedback: "子宮収縮を促進します。" },
+            { text: "プロゲステロン", isCorrect: true, feedback: "正解。妊娠維持に重要なホルモンで、子宮の活動を抑制します。" },
+            { text: "エストロゲン", isCorrect: false, feedback: "子宮の成長や収縮感受性を高めます。" },
+            { text: "プロスタグランジン", isCorrect: false, feedback: "子宮収縮を促進します。" }
+        ],
+        mainExplanation: "プロゲステロンは「妊娠維持ホルモン」とも呼ばれ、子宮平滑筋の弛緩作用や免疫抑制作用などにより、妊娠を維持する上で重要な役割を果たします。",
+        keywords: ["妊娠 ホルモン 子宮収縮", "プロゲステロン 妊娠維持"]
+    },
+    {
+        id: 402, genre: "周産期生理", difficulty: "中級", // 旧上級→中級：分娩進行の基本
+        question: "分娩第1期の潜伏期において、子宮口開大の目安として正しいのはどれか。",
+        options: [
+            { text: "0〜2cm", isCorrect: false, feedback: "これは一般的に初期の潜伏期ですが、より明確な基準があります。" },
+            { text: "0〜3cm", isCorrect: false, feedback: "これは一般的に初期の潜伏期ですが、より明確な基準があります。" },
+            { text: "0〜4cm", isCorrect: true, feedback: "正解。分娩第1期潜伏期は、子宮口が0cmから4cm開大するまでと定義されます。" },
+            { text: "0〜5cm", isCorrect: false, feedback: "これは活動期に近い開大度です。" }
+        ],
+        mainExplanation: "分娩第1期は潜伏期と活動期に分けられ、潜伏期は子宮口が0cmから4cm開大するまで、活動期は4cmから10cm（全開大）までとされています。",
+        keywords: ["分娩第1期 潜伏期", "子宮口開大度"]
+    },
+    {
+        id: 403, genre: "周産期生理", difficulty: "鬼レベル",
+        question: "胎児循環において、出生後に閉鎖する血管・構造として最も遅いのはどれか。",
+        options: [
+            { text: "卵円孔", isCorrect: false, feedback: "出生直後から機能的に閉鎖し始めます。" },
+            { text: "動脈管", isCorrect: false, feedback: "出生後数時間から数日で閉鎖します。" },
+            { text: "臍帯動脈", isCorrect: false, feedback: "臍帯切断後、数分で閉鎖します。" },
+            { text: "静脈管", isCorrect: true, feedback: "正解。出生後数日から数週間かけて閉鎖します。" }
+        ],
+        mainExplanation: "胎児循環の主要なシャントである卵円孔、動脈管、静脈管は出生後の呼吸開始と循環動態の変化に伴い閉鎖しますが、静脈管が最も遅く閉鎖するとされています。",
+        keywords: ["胎児循環 出生後閉鎖", "静脈管閉鎖"]
+    },
+    {
+        id: 404, genre: "周産期生理", difficulty: "中級",
+        question: "妊娠初期に最も多く分泌され、妊娠の診断に用いられるホルモンはどれか。",
+        options: [
+            { text: "エストロゲン", isCorrect: false, feedback: "妊娠中に増加しますが、早期診断にはHCGが使われます。" },
+            { text: "プロゲステロン", isCorrect: false, feedback: "妊娠中に増加しますが、早期診断にはHCGが使われます。" },
+            { text: "ヒト絨毛性ゴナドトロピン (hCG)", isCorrect: true, feedback: "正解。受精卵が着床すると絨毛から分泌され、妊娠検査薬で検出されます。" },
+            { text: "プロラクチン", isCorrect: false, feedback: "授乳に関わるホルモンです。" }
+        ],
+        mainExplanation: "hCGは受精卵が子宮に着床した後、絨毛から分泌されるホルモンで、妊娠初期に急激に増加するため、妊娠の早期診断に用いられます。",
+        keywords: ["妊娠初期ホルモン", "hCG 妊娠診断"]
+    },
+    {
+        id: 405, genre: "周産期生理", difficulty: "中級", // 旧上級→中級：分娩介助の基本
+        question: "分娩第3期における胎盤剥離の徴候として適切でないのはどれか。",
+        options: [
+            { text: "子宮底が臍上まで上昇する", isCorrect: true, feedback: "誤り（正解）。胎盤剥離が始まると、子宮底は臍上ではなく、臍下へ移動し硬くなります。" },
+            { text: "性器出血の増加", isCorrect: false, feedback: "剥離面からの出血が増加します。" },
+            { text: "臍帯の延長", isCorrect: false, feedback: "胎盤が下降するため、臍帯が体外に延長して見えます。" },
+            { text: "母体の腹痛", isCorrect: false, feedback: "胎盤剥離に伴う収縮痛を感じることがあります。" }
+        ],
+        mainExplanation: "胎盤剥離が始まると、子宮底は収縮して硬くなり、臍上ではなく臍下へ移動します。性器出血の増加や臍帯の延長も徴候です。",
+        keywords: ["胎盤剥離 徴候", "分娩第3期"]
+    },
+    {
+        id: 406, genre: "周産期生理", difficulty: "鬼レベル",
+        question: "妊娠中の母体における血液凝固能の変化で正しいのはどれか。",
+        options: [
+            { text: "凝固因子は全体的に減少する。", isCorrect: false, feedback: "一部を除き、凝固因子は増加傾向にあります。" },
+            { text: "線溶系は亢進する。", isCorrect: false, feedback: "線溶系は抑制され、血栓形成傾向になります。" },
+            { text: "血小板数は著しく減少する。", isCorrect: false, feedback: "血小板数は軽度減少または変化なしですが、著しい減少は異常です。" },
+            { text: "血栓形成傾向が増大する。", isCorrect: true, feedback: "正解。凝固因子の増加と線溶系の抑制により、血栓塞栓症のリスクが高まります。" }
+        ],
+        mainExplanation: "妊娠中は、分娩時の出血に備えて凝固因子が増加し、線溶系が抑制されるため、血液は凝固亢進状態となり、血栓塞栓症のリスクが高まります。",
+        keywords: ["妊娠中 血液凝固能", "妊娠 血栓リスク"]
+    },
+    {
+        id: 407, genre: "周産期生理", difficulty: "中級",
+        question: "妊娠によって母体の循環器系に起こる変化として正しいのはどれか。",
+        options: [
+            { text: "心拍出量は減少する", isCorrect: false, feedback: "心拍出量は増加します。" },
+            { text: "血圧は全妊娠期間を通して上昇する", isCorrect: false, feedback: "中期には低下傾向が見られます。" },
+            { text: "循環血液量は増加する", isCorrect: true, feedback: "正解。胎盤灌流の維持や分娩時の出血に備えて増加します。" },
+            { text: "末梢血管抵抗は増加する", isCorrect: false, feedback: "末梢血管抵抗は低下します。" }
+        ],
+        mainExplanation: "妊娠中は、胎児への血流確保と分娩時の出血に備えるため、循環血液量、心拍出量が増加し、末梢血管抵抗は低下します。",
+        keywords: ["妊娠中 循環器系変化", "循環血液量増加 妊娠"]
+    },
+    {
+        id: 408, genre: "周産期生理", difficulty: "鬼レベル", // 旧上級→鬼：メカニズムの詳細
+        question: "妊娠中の呼吸器系の変化で、過換気状態になる主な理由として正しいのはどれか。",
+        options: [
+            { text: "胎児の酸素消費量が増加するため", isCorrect: false, feedback: "胎児の酸素消費量増加は母体の呼吸量増加の要因ですが、直接的な過換気状態の原因ではありません。" },
+            { text: "横隔膜が挙上し、肺活量が減少するため", isCorrect: false, feedback: "横隔膜挙上は肺活量を減少させますが、過換気状態の原因ではありません。" },
+            { text: "プロゲステロンによる呼吸中枢への刺激", isCorrect: true, feedback: "正解。プロゲステロンの作用により呼吸中枢が刺激され、呼吸回数や一回換気量が増加します。" },
+            { text: "貧血による代償反応", isCorrect: false, feedback: "貧血も呼吸数増加の要因ですが、過換気状態の主要な原因はホルモンです。" }
+        ],
+        mainExplanation: "妊娠中の母体は、プロゲステロンの呼吸中枢への直接作用により、呼吸回数や一回換気量が増加し、慢性的な過換気状態となります。これによりPaCO2が低下します。",
+        keywords: ["妊娠中 呼吸器系変化", "プロゲステロン 過換気"]
+    },
+    {
+        id: 409, genre: "周産期生理", difficulty: "中級", // 旧鬼レベル→中級：臨床の常識
+        question: "分娩第2期の開始から終了までの期間で、経産婦において平均的に最も短いのはどれか。",
+        options: [
+            { text: "初産婦の潜伏期", isCorrect: false, feedback: "潜伏期は分娩第1期です。" },
+            { text: "経産婦の活動期", isCorrect: false, feedback: "活動期は分娩第1期です。" },
+            { text: "初産婦の分娩第2期", isCorrect: false, feedback: "初産婦の第2期は経産婦より長いです。" },
+            { text: "経産婦の分娩第2期", isCorrect: true, feedback: "正解。経産婦は子宮口全開大から児娩出までが初産婦より短く、通常30分～1時間程度です。" }
+        ],
+        mainExplanation: "分娩経過は初産婦と経産婦で大きく異なり、特に分娩第2期（子宮口全開大から児娩出まで）は、経産婦の方が子宮頸管や骨盤底筋が伸展しやすいため、初産婦に比べて著しく短縮されます。",
+        keywords: ["分娩第2期 期間", "初産婦 経産婦 分娩時間"]
+    },
+    {
+        id: 410, genre: "周産期生理", difficulty: "中級",
+        question: "妊娠中にみられる色素沈着の主な原因となるホルモンはどれか。",
+        options: [
+            { text: "エストロゲン", isCorrect: false, feedback: "エストロゲンも関与しますが、直接的な原因ではありません。" },
+            { text: "プロゲステロン", isCorrect: false, feedback: "プロゲステロンも関与しますが、直接的な原因ではありません。" },
+            { text: "メラニン細胞刺激ホルモン (MSH)", isCorrect: true, feedback: "正解。MSHの増加が色素沈着を促進します。" },
+            { text: "ヒト絨毛性ゴナドトロピン (hCG)", isCorrect: false, feedback: "hCGは妊娠の維持に関わるホルモンです。" }
+        ],
+        mainExplanation: "妊娠中の色素沈着（肝斑、乳輪の黒ずみ、正中線など）は、胎盤から分泌されるメラニン細胞刺激ホルモン（MSH）の増加が主な原因とされています。",
+        keywords: ["妊娠中 色素沈着", "MSH 妊娠"]
+    },
+    {
+        id: 411, genre: "周産期生理", difficulty: "中級", // 旧上級→中級：産褥の基本
+        question: "分娩後、子宮復古を促進する因子として最も重要なのはどれか。",
+        options: [
+            { text: "早期離床", isCorrect: false, feedback: "早期離床は復古を助けますが、最も重要ではありません。" },
+            { text: "授乳", isCorrect: true, feedback: "正解。授乳によるオキシトシン分泌が子宮収縮を促し、復古を促進します。" },
+            { text: "十分な睡眠", isCorrect: false, feedback: "睡眠は回復に重要ですが、直接的な復古促進因子ではありません。" },
+            { text: "適切なカロリー摂取", isCorrect: false, feedback: "栄養は回復に重要ですが、直接的な復古促進因子ではありません。" }
+        ],
+        mainExplanation: "分娩後の子宮復古は、子宮が妊娠前の状態に戻る過程です。授乳によって分泌されるオキシトシンは、子宮の収縮を促し、悪露の排出や子宮のサイズ縮小に大きく寄与します。",
+        keywords: ["子宮復古 促進因子", "授乳 オキシトシン"]
+    },
+    {
+        id: 412, genre: "周産期生理", difficulty: "中級", // 旧鬼レベル→中級：肺成熟の基本
+        question: "胎児の呼吸運動の開始に最も重要な役割を果たす肺の成熟指標はどれか。",
+        options: [
+            { text: "肺の容積", isCorrect: false, feedback: "容積だけでなく、機能的な成熟が重要です。" },
+            { text: "肺胞の形成", isCorrect: false, feedback: "肺胞形成も重要ですが、呼吸運動開始の直接的な指標ではありません。" },
+            { text: "肺サーファクタントの産生", isCorrect: true, feedback: "正解。サーファクタントが十分に産生されることで肺胞が虚脱せず、出生後の呼吸が可能になります。" },
+            { text: "気管支の分岐", isCorrect: false, feedback: "気管支の分岐は早期に完了します。" }
+        ],
+        mainExplanation: "出生後の肺呼吸を開始し維持するためには、肺胞の虚脱を防ぐ肺サーファクタントが十分に産生されていることが不可欠です。サーファクタントは妊娠後期に増加し、肺の成熟度を示す重要な指標となります。",
+        keywords: ["胎児呼吸運動 肺成熟", "肺サーファクタント 産生"]
+    },
+    {
+        id: 413, genre: "周産期生理", difficulty: "中級",
+        question: "妊娠中の血液検査で、生理的に増加する項目はどれか。",
+        options: [
+            { text: "ヘモグロビン濃度", isCorrect: false, feedback: "相対的に低下します（生理的貧血）。" },
+            { text: "血小板数", isCorrect: false, feedback: "変化なしまたは軽度低下です。" },
+            { text: "白血球数", isCorrect: true, feedback: "正解。特に好中球が増加します。" },
+            { text: "血清鉄", isCorrect: false, feedback: "鉄は需要が増えるため、不足しがちです。" }
+        ],
+        mainExplanation: "妊娠中は、感染防御機能の亢進や炎症反応への対応のため、白血球数（特に好中球）が生理的に増加します。",
+        keywords: ["妊娠中 血液検査 生理的変化", "白血球数増加 妊娠"]
+    },
+    {
+        id: 414, genre: "周産期生理", difficulty: "中級", // 旧上級→中級：解剖生理の基本
+        question: "胎盤の機能として誤っているのはどれか。",
+        options: [
+            { text: "胎児への栄養供給", isCorrect: false, feedback: "正しい機能です。" },
+            { text: "胎児の排泄物処理", isCorrect: false, feedback: "正しい機能です。" },
+            { text: "母体からの抗体移行（免疫付与）", isCorrect: false, feedback: "正しい機能です。" },
+            { text: "母体と胎児の血液の直接混合", isCorrect: true, feedback: "正解。胎盤は血液が直接混ざらないように隔壁となっています。" }
+        ],
+        mainExplanation: "胎盤は母体と胎児の間で物質交換を行う重要な臓器ですが、血液が直接混合することはありません。胎盤を介して酸素、栄養、抗体が胎児に供給され、二酸化炭素や老廃物が母体へ排出されます。",
+        keywords: ["胎盤 機能", "母児間血液混合"]
+    },
+    {
+        id: 415, genre: "周産期生理", difficulty: "中級", // 旧鬼レベル→中級：妊婦指導の基本
+        question: "妊娠後期にみられる仰臥位低血圧症候群のメカニズムとして正しいのはどれか。",
+        options: [
+            { text: "胎児が下大静脈を圧迫し、心拍出量が減少する。", isCorrect: true, feedback: "正解。仰臥位で増大した子宮が下大静脈を圧迫するため、静脈還流が低下し心拍出量が減少します。" },
+            { text: "胎児が上大静脈を圧迫し、脳血流が減少する。", isCorrect: false, feedback: "上大静脈の圧迫は起こりません。" },
+            { text: "子宮収縮により血圧が低下する。", isCorrect: false, feedback: "子宮収縮による血圧低下は直接的なメカニズムではありません。" },
+            { text: "プロゲステロンの作用により血管が拡張しすぎる。", isCorrect: false, feedback: "プロゲステロンの血管拡張作用は妊娠初期から見られますが、仰臥位低血圧症候群の直接的な原因ではありません。" }
+        ],
+        mainExplanation: "妊娠後期に仰臥位をとると、増大した子宮が下大静脈を圧迫し、心臓への血液還流が低下します。これにより心拍出量が減少し、母体の血圧が低下する現象を仰臥位低血圧症候群と呼びます。",
+        keywords: ["仰臥位低血圧症候群 メカニズム", "下大静脈圧迫"]
+    },
+
+    // === 新生児管理 === (全15問)
+
+    {
+        id: 501, genre: "新生児管理", difficulty: "中級",
+        question: "アプガースコアの評価項目に含まれないのはどれか。",
+        options: [
+            { text: "心拍数", isCorrect: false, feedback: "含まれます。" },
+            { text: "呼吸", isCorrect: false, feedback: "含まれます。" },
+            { text: "体温", isCorrect: true, feedback: "正解。体温はアプガースコアには含まれません。" },
+            { text: "皮膚色", isCorrect: false, feedback: "含まれます。" }
+        ],
+        mainExplanation: "アプガースコアは、心拍数、呼吸、筋緊張、刺激に対する反応、皮膚色の5項目で新生児の状態を評価します。",
+        keywords: ["アプガースコア 項目", "新生児評価"]
+    },
+    {
+        id: 502, genre: "新生児管理", difficulty: "中級", // 旧上級→中級：生理的変化の基本
+        question: "新生児の生理的体重減少について正しいのはどれか。",
+        options: [
+            { text: "生後24時間以内に最大となる。", isCorrect: false, feedback: "通常、生後3〜5日頃に最大となります。" },
+            { text: "減少率は出生体重の15%を超えることが多い。", isCorrect: false, feedback: "通常、出生体重の5〜10%程度です。" },
+            { text: "原因は主に不感蒸泄と排泄、哺乳量不足である。", isCorrect: true, feedback: "正解。体外水分喪失と哺乳量不足が主な原因です。" },
+            { text: "減少が著しい場合は、すぐに輸液を開始する。", isCorrect: false, feedback: "まずは哺乳量の確認や指導を行い、必要に応じて検討します。" }
+        ],
+        mainExplanation: "生理的体重減少は、出生後数日で起こる一時的な体重減少で、通常は出生体重の5〜10%程度です。水分喪失と哺乳量不足が主な原因ですが、適切なケアで回復します。",
+        keywords: ["新生児 生理的体重減少", "新生児 体重減少 原因"]
+    },
+    {
+        id: 503, genre: "新生児管理", difficulty: "鬼レベル",
+        question: "新生児の低血糖の診断基準として、血糖値が何mg/dL未満である場合を指すか。",
+        options: [
+            { text: "50mg/dL", isCorrect: false, feedback: "これは成人の低血糖の基準に近い値です。" },
+            { text: "45mg/dL", isCorrect: true, feedback: "正解。新生児では血糖値45mg/dL未満が低血糖と診断されます。" },
+            { text: "40mg/dL", isCorrect: false, feedback: "これはより重度の低血糖を示す値です。" },
+            { text: "30mg/dL", isCorrect: false, feedback: "これは非常に危険な低血糖です。" }
+        ],
+        mainExplanation: "新生児の低血糖は、特に早産児や低出生体重児、糖尿病母体児などでリスクが高く、血糖値が45mg/dL未満で診断され、速やかな対応が必要です。",
+        keywords: ["新生児 低血糖 診断基準", "新生児血糖値"]
+    },
+    {
+        id: 504, genre: "新生児管理", difficulty: "中級",
+        question: "新生児の生理的黄疸について正しいのはどれか。",
+        options: [
+            { text: "生後24時間以内に発現する。", isCorrect: false, feedback: "生後24時間以内の黄疸は病的黄疸を疑います。" },
+            { text: "直接ビリルビンが優位である。", isCorrect: false, feedback: "間接ビリルビンが優位です。" },
+            { text: "生後2〜3日頃から出現し、1週間程度で消失する。", isCorrect: true, feedback: "正解。肝機能の未熟性によるもので、一時的なものです。" },
+            { text: "すべての新生児に治療が必要である。", isCorrect: false, feedback: "治療が必要なのは、ビリルビン値が高い場合や病的黄疸の場合です。" }
+        ],
+        mainExplanation: "生理的黄疸は、新生児の肝機能の未熟性により間接ビリルビンが一時的に上昇する現象で、通常は生後2〜3日頃から出現し、特別な治療を必要とせずに消失します。",
+        keywords: ["新生児 生理的黄疸", "間接ビリルビン"]
+    },
+    {
+        id: 505, genre: "新生児管理", difficulty: "中級", // 旧上級→中級：代表的疾患
+        question: "新生児の呼吸窮迫症候群（RDS）の主な原因はどれか。",
+        options: [
+            { text: "胎便吸引症候群", isCorrect: false, feedback: "これは別の呼吸障害の原因です。" },
+            { text: "肺サーファクタント欠乏", isCorrect: true, feedback: "正解。サーファクタント不足により肺胞が虚脱しやすくなります。" },
+            { text: "先天性心疾患", isCorrect: false, feedback: "心疾患は呼吸困難を引き起こすことがありますが、RDSの主な原因ではありません。" },
+            { text: "横隔膜ヘルニア", isCorrect: false, feedback: "これも呼吸障害の原因ですが、RDSとは異なります。" }
+        ],
+        mainExplanation: "呼吸窮迫症候群（RDS）は、早産児に多く見られ、肺胞の表面張力を低下させる肺サーファクタントの産生不足が主な原因です。",
+        keywords: ["新生児 呼吸窮迫症候群 原因", "肺サーファクタント欠乏"]
+    },
+    {
+        id: 506, genre: "新生児管理", difficulty: "中級", // 旧鬼レベル→中級：NCPRは必須
+        question: "新生児仮死の蘇生において、心拍数60回/分未満が持続する場合の次の対応として最も適切なのはどれか。",
+        options: [
+            { text: "酸素投与を継続し、経過観察する。", isCorrect: false, feedback: "心拍数60回/分未満は緊急性が高く、より積極的な介入が必要です。" },
+            { text: "胸骨圧迫を開始する。", isCorrect: true, feedback: "正解。換気を適切に行っても心拍数60回/分未満が持続する場合は、胸骨圧迫を開始します。" },
+            { text: "アドレナリンを投与する。", isCorrect: false, feedback: "胸骨圧迫を行っても改善しない場合に検討されます。" },
+            { text: "体位変換を行い、刺激を与える。", isCorrect: false, feedback: "より重症な状態であり、これだけでは不十分です。" }
+        ],
+        mainExplanation: "新生児蘇生法（NCPR）のアルゴリズムでは、適切な陽圧換気を30秒行っても心拍数が60回/分未満の場合、胸骨圧迫を開始することが推奨されています。",
+        keywords: ["新生児仮死 蘇生 心拍数", "NCPR 胸骨圧迫"]
+    },
+    {
+        id: 507, genre: "新生児管理", difficulty: "中級",
+        question: "新生児の生理的特徴として、体温調節機能が未熟である主な理由はどれか。",
+        options: [
+            { text: "体表面積が小さい", isCorrect: false, feedback: "体表面積は体重に対する比率が大きく、熱放散しやすいです。" },
+            { text: "褐色脂肪組織が少ない", isCorrect: false, feedback: "褐色脂肪組織は新生児に豊富に存在し、熱産生に寄与します。" },
+            { text: "皮下脂肪が少ない、筋肉量が少ない", isCorrect: true, feedback: "正解。保温効果のある皮下脂肪が少なく、熱産生に関わる筋肉量も少ないため、熱放散しやすいです。" },
+            { text: "発汗機能が発達している", isCorrect: false, feedback: "発汗機能は未熟です。" }
+        ],
+        mainExplanation: "新生児は、体重あたりの体表面積が大きく、皮下脂肪が少ないため熱が放散されやすく、また筋肉量が少ないため震えによる熱産生も不十分であるため、体温調節機能が未熟です。",
+        keywords: ["新生児 体温調節", "新生児生理的特徴"]
+    },
+    {
+        id: 508, genre: "新生児管理", difficulty: "中級", // 旧上級→中級：観察の基本
+        question: "新生児の生理的特徴である「新生児中毒疹」について正しいのはどれか。",
+        options: [
+            { text: "生後すぐに現れ、全身に広がる発疹である。", isCorrect: false, feedback: "通常、生後2〜3日頃に出現します。" },
+            { text: "細菌感染が原因であり、抗生剤での治療が必要である。", isCorrect: false, feedback: "原因不明の良性発疹であり、治療は不要です。" },
+            { text: "顔面や体幹に紅斑と黄白色の小丘疹がみられ、数日で自然に消失する。", isCorrect: true, feedback: "正解。新生児に特有の良性発疹で、自然に消えます。" },
+            { text: "アレルギー反応の一種であり、母乳を中止すべきである。", isCorrect: false, feedback: "アレルギーとは関係なく、母乳中止の必要はありません。" }
+        ],
+        mainExplanation: "新生児中毒疹は、生後数日〜1週間頃に新生児の顔面や体幹に現れる、紅斑と黄白色の小丘疹を伴う良性の発疹です。原因は不明ですが、数日で自然に消失し、治療は不要です。",
+        keywords: ["新生児中毒疹", "新生児発疹"]
+    },
+    {
+        id: 509, genre: "新生児管理", difficulty: "鬼レベル",
+        question: "新生児スクリーニングにおけるタンデムマス法導入の意義として最も重要なのはどれか。",
+        options: [
+            { text: "検査費用が大幅に削減された。", isCorrect: false, feedback: "費用は高額ですが、早期診断のメリットが大きいです。" },
+            { text: "一度に検査できる疾患数が飛躍的に増加した。", isCorrect: true, feedback: "正解。従来の検査に比べ、多くの代謝異常症を同時にスクリーニングできるようになりました。" },
+            { text: "採血量が減少し、新生児への負担が軽減された。", isCorrect: false, feedback: "採血量は従来と大きく変わりません。" },
+            { text: "遺伝子診断が可能になった。", isCorrect: false, feedback: "遺伝子診断ではなく、代謝産物の測定によるスクリーニングです。" }
+        ],
+        mainExplanation: "タンデムマス法は、新生児スクリーニングにおいて、一つの血液検体から数十種類の先天性代謝異常症を同時に、かつ高感度に検出することを可能にしました。これにより、早期診断・早期治療が実現し、重篤な後遺症を防ぐことに大きく貢献しています。",
+        keywords: ["新生児スクリーニング タンデムマス法", "先天性代謝異常症"]
+    },
+    {
+        id: 510, genre: "新生児管理", difficulty: "中級",
+        question: "新生児の排便について、生後24時間以内に排泄されるべきものはどれか。",
+        options: [
+            { text: "正常便", isCorrect: false, feedback: "生後数日後から見られます。" },
+            { text: "移行便", isCorrect: false, feedback: "生後2〜3日後から見られます。" },
+            { text: "胎便", isCorrect: true, feedback: "正解。胎便は通常、生後24時間以内に排泄されます。" },
+            { text: "下痢便", isCorrect: false, feedback: "異常な排便です。" }
+        ],
+        mainExplanation: "胎便は、胎児期に腸管内に貯留した粘稠性のある黒緑色の便で、通常は生後24時間以内に排泄されます。24時間以内に排泄されない場合は、腸閉塞などの異常を疑う必要があります。",
+        keywords: ["新生児 排便 胎便", "胎便排泄時間"]
+    },
+    {
+        id: 511, genre: "新生児管理", difficulty: "中級", // 旧上級→中級：ルーチンケア
+        question: "新生児のビタミンK欠乏性出血症の予防として最も適切なのはどれか。",
+        options: [
+            { text: "出生後すぐにビタミンCを投与する", isCorrect: false, feedback: "ビタミンCは出血症予防には効果がありません。" },
+            { text: "出生後すぐにビタミンKを投与する", isCorrect: true, feedback: "正解。出生直後のビタミンK投与は、新生児のビタミンK欠乏性出血症を予防する上で極めて重要です。" },
+            { text: "母親に妊娠中からビタミンKを摂取させる", isCorrect: false, feedback: "母親の摂取だけでは新生児の出血症予防には不十分です。" },
+            { text: "生後1ヶ月まで母乳を与えない", isCorrect: false, feedback: "母乳育児は推奨されます。ビタミンKは母乳中に少ないため、新生児への投与が必要です。" }
+        ],
+        mainExplanation: "新生児は、出生直後からビタミンKが不足しやすく、ビタミンK欠乏性出血症のリスクがあります。そのため、出生直後のビタミンK製剤の経口または筋肉内投与が推奨されています。",
+        keywords: ["新生児 ビタミンK欠乏性出血症", "ビタミンK投与"]
+    },
+    {
+        id: 512, genre: "新生児管理", difficulty: "鬼レベル", // 旧鬼レベルのまま：検査手法の詳細
+        question: "新生児の聴覚スクリーニング検査において、最も一般的に用いられる方法はどれか。",
+        options: [
+            { text: "聴性脳幹反応 (ABR)", isCorrect: false, feedback: "より詳細な検査ですが、一次スクリーニングにはOAEが一般的です。" },
+            { text: "条件詮索反応聴力検査 (COR)", isCorrect: false, feedback: "乳幼児の精密聴力検査で用いられます。" },
+            { text: "自発性耳音響放射 (OAE)", isCorrect: true, feedback: "正解。短時間で簡便に実施できるため、一次スクリーニングとして広く用いられています。" },
+            { text: "純音聴力検査", isCorrect: false, feedback: "対象児が協力的でないと実施が困難です。" }
+        ],
+        mainExplanation: "新生児聴覚スクリーニング検査は、聴覚障害の早期発見・早期療育のために非常に重要です。OAE（自発性耳音響放射）は、非侵襲的で短時間に実施できるため、多くの施設で一次スクリーニングとして採用されています。",
+        keywords: ["新生児聴覚スクリーニング OAE", "聴覚障害 早期発見"]
+    },
+    {
+        id: 513, genre: "新生児管理", difficulty: "中級",
+        question: "新生児の原始反射のうち、哺乳行動に関連する反射はどれか。",
+        options: [
+            { text: "モロー反射", isCorrect: false, feedback: "抱きつき反射です。" },
+            { text: "把握反射", isCorrect: false, feedback: "握る反射です。" },
+            { text: "吸啜反射", isCorrect: true, feedback: "正解。口に触れたものを吸う反射で、哺乳に不可欠です。" },
+            { text: "非対称性緊張性頸反射 (ATNR)", isCorrect: false, feedback: "フェンシングポーズの反射です。" }
+        ],
+        mainExplanation: "吸啜反射は、新生児の口に何かが触れると吸い付く反射で、哺乳行動の基礎となります。この反射は生後数ヶ月で消失し、随意的な吸啜行動へと移行します。",
+        keywords: ["新生児 原始反射 哺乳", "吸啜反射"]
+    },
+    {
+        id: 514, genre: "新生児管理", difficulty: "中級", // 旧上級→中級：バイタルの基本
+        question: "新生児の呼吸回数と心拍数の正常範囲として適切なのはどれか。",
+        options: [
+            { text: "呼吸: 10〜20回/分、心拍: 60〜100回/分", isCorrect: false, feedback: "これは成人や小児の正常値です。" },
+            { text: "呼吸: 20〜30回/分、心拍: 80〜120回/分", isCorrect: false, feedback: "呼吸数、心拍数ともにまだ低いです。" },
+            { text: "呼吸: 30〜60回/分、心拍: 100〜160回/分", isCorrect: true, feedback: "正解。新生児は成人よりも呼吸・心拍数が速いのが特徴です。" },
+            { text: "呼吸: 60〜80回/分、心拍: 160〜200回/分", isCorrect: false, feedback: "これは頻呼吸・頻脈の範囲です。" }
+        ],
+        mainExplanation: "新生児は成人や小児に比べて、体表面積あたりの代謝が高く、呼吸中枢も未熟なため、呼吸回数や心拍数が速いのが正常範囲です。",
+        keywords: ["新生児 呼吸数 心拍数 正常値", "新生児バイタルサイン"]
+    },
+    {
+        id: 515, genre: "新生児管理", difficulty: "鬼レベル",
+        question: "新生児の低体温が引き起こす可能性のある合併症として最も重篤なのはどれか。",
+        options: [
+            { text: "生理的体重減少の促進", isCorrect: false, feedback: "低体温は体重減少とは直接関連しません。" },
+            { text: "生理的黄疸の悪化", isCorrect: false, feedback: "黄疸悪化の可能性はありますが、最も重篤ではありません。" },
+            { text: "代謝性アシドーシス、呼吸窮迫の悪化", isCorrect: true, feedback: "正解。低体温は代謝性アシドーシスを招き、呼吸窮迫を悪化させるなど、全身状態を急速に悪化させます。" },
+            { text: "新生児中毒疹の発現", isCorrect: false, feedback: "新生児中毒疹は低体温とは関係ありません。" }
+        ],
+        mainExplanation: "新生児は体温調節機能が未熟なため、低体温に陥りやすいです。低体温は、代謝性アシドーシス、低血糖、呼吸窮迫の悪化、凝固異常などを引き起こし、重篤な状態に陥る可能性があるため、厳重な体温管理が必要です。",
+        keywords: ["新生児 低体温 合併症", "新生児体温管理"]
+    },
+
+    // === 産科合併症 === (全15問)
+
+    {
+        id: 601, genre: "産科合併症", difficulty: "中級",
+        question: "妊娠悪阻の症状として最も特徴的なのはどれか。",
+        options: [
+            { text: "妊娠初期の軽度の吐き気", isCorrect: false, feedback: "これはつわり（悪阻）の一般的な症状ですが、悪阻はより重度です。" },
+            { text: "体重減少、脱水、電解質異常を伴う重度の嘔吐", isCorrect: true, feedback: "正解。通常のつわりと異なり、治療が必要な状態です。" },
+            { text: "妊娠後期にみられる足のむくみ", isCorrect: false, feedback: "これは妊娠後期の生理的変化または妊娠高血圧症候群の症状です。" },
+            { text: "子宮収縮に伴う下腹部痛", isCorrect: false, feedback: "これは切迫流産・早産などの症状です。" }
+        ],
+        mainExplanation: "妊娠悪阻は、通常のつわりとは異なり、著しい嘔吐により体重減少、脱水、電解質異常などをきたす病的な状態であり、入院治療が必要となることもあります。",
+        keywords: ["妊娠悪阻 症状", "つわり 妊娠悪阻 違い"]
+    },
+    {
+        id: 602, genre: "産科合併症", difficulty: "中級", // 旧上級→中級：HDPは最重要疾患
+        question: "妊娠高血圧症候群の診断基準に含まれないのはどれか。",
+        options: [
+            { text: "収縮期血圧140mmHg以上または拡張期血圧90mmHg以上", isCorrect: false, feedback: "診断基準に含まれます。" },
+            { text: "蛋白尿", isCorrect: false, feedback: "診断基準に含まれます。" },
+            { text: "妊娠20週以降に発症", isCorrect: false, feedback: "診断基準に含まれます。" },
+            { text: "妊娠初期からの高血圧", isCorrect: true, feedback: "誤り（正解）。妊娠初期からの高血圧は、高血圧合併妊娠であり、妊娠高血圧症候群とは区別されます。" }
+        ],
+        mainExplanation: "妊娠高血圧症候群は、妊娠20週以降に初めて高血圧と蛋白尿を認める場合に診断されます。妊娠前から高血圧がある場合は「高血圧合併妊娠」と診断されます。",
+        keywords: ["妊娠高血圧症候群 診断基準", "高血圧合併妊娠"]
+    },
+    {
+        id: 603, genre: "産科合併症", difficulty: "中級", // 旧鬼レベル→中級：緊急時の基本症状
+        question: "常位胎盤早期剥離の症状として、最も緊急性が高いのはどれか。",
+        options: [
+            { text: "軽度の性器出血", isCorrect: false, feedback: "軽度の出血だけで緊急性が高いとは限りません。" },
+            { text: "子宮の板状硬、持続的な激しい腹痛", isCorrect: true, feedback: "正解。子宮の板状硬と激しい腹痛は、胎盤剥離が進行していることを示す緊急性の高い症状です。" },
+            { text: "胎動の減少", isCorrect: false, feedback: "胎動減少は胎児仮死の兆候ですが、常位胎盤早期剥離に特異的ではありません。" },
+            { text: "軽い子宮収縮", isCorrect: false, feedback: "軽い子宮収縮は前駆陣痛などでも見られます。" }
+        ],
+        mainExplanation: "常位胎盤早期剥離は、分娩前に胎盤が子宮壁から剥がれてしまう重篤な合併症です。子宮の板状硬結と激しい持続的な腹痛は、胎盤剥離が広範囲に及んでいる可能性を示唆し、母児ともに危険な状態です。",
+        keywords: ["常位胎盤早期剥離 症状", "子宮板状硬"]
+    },
+    {
+        id: 604, genre: "産科合併症", difficulty: "中級",
+        question: "妊娠糖尿病の診断に用いられる検査はどれか。",
+        options: [
+            { text: "空腹時血糖値のみ", isCorrect: false, feedback: "これだけでは不十分です。" },
+            { text: "HbA1c", isCorrect: false, feedback: "過去1〜2ヶ月の血糖コントロール状態を反映しますが、妊娠糖尿病の診断にはOGTTが一般的です。" },
+            { text: "75g経口ブドウ糖負荷試験 (OGTT)", isCorrect: true, feedback: "正解。診断に最も広く用いられる検査です。" },
+            { text: "尿糖検査のみ", isCorrect: false, feedback: "尿糖は陽性でも血糖値が正常な場合があり、診断には不十分です。" }
+        ],
+        mainExplanation: "妊娠糖尿病は、妊娠中に初めて発見または発症した糖尿病に至っていない糖代謝異常を指し、75gOGTTで診断されます。",
+        keywords: ["妊娠糖尿病 診断", "75gOGTT 妊娠"]
+    },
+    {
+        id: 605, genre: "産科合併症", difficulty: "中級", // 旧上級→中級：頻度高い
+        question: "分娩後出血の主な原因として最も頻度が高いのはどれか。",
+        options: [
+            { text: "産道損傷", isCorrect: false, feedback: "原因の一つですが、弛緩出血ほどではありません。" },
+            { text: "凝固障害", isCorrect: false, feedback: "稀な原因です。" },
+            { text: "子宮弛緩症", isCorrect: true, feedback: "正解。子宮が十分に収縮せず、胎盤付着部からの出血が止まらない状態です。" },
+            { text: "胎盤遺残", isCorrect: false, feedback: "原因の一つですが、弛緩出血ほどではありません。" }
+        ],
+        mainExplanation: "分娩後出血の約70〜80%は子宮弛緩症が原因とされており、子宮収縮薬の投与や子宮マッサージなどで対応します。",
+        keywords: ["分娩後出血 原因", "子宮弛緩症"]
+    },
+    {
+        id: 606, genre: "産科合併症", difficulty: "鬼レベル",
+        question: "HELLP症候群の診断基準に含まれる項目として誤っているのはどれか。",
+        options: [
+            { text: "溶血 (Hemolysis)", isCorrect: false, feedback: "含まれます。" },
+            { text: "肝酵素上昇 (Elevated Liver enzymes)", isCorrect: false, feedback: "含まれます。" },
+            { text: "血小板減少 (Low Platelet count)", isCorrect: false, feedback: "含まれます。" },
+            { text: "高血糖 (High blood glucose)", isCorrect: true, feedback: "誤り（正解）。HELLP症候群は高血糖とは直接関係ありません。" }
+        ],
+        mainExplanation: "HELLP症候群は、妊娠高血圧症候群の重症型で、溶血(Hemolysis)、肝酵素上昇(Elevated Liver enzymes)、血小板減少(Low Platelet count)を特徴とします。",
+        keywords: ["HELLP症候群 診断基準", "妊娠高血圧症候群 重症型"]
+    },
+    {
+        id: 607, genre: "産科合併症", difficulty: "中級",
+        question: "切迫早産の診断で最も重要な所見はどれか。",
+        options: [
+            { text: "腹部の緊満感", isCorrect: false, feedback: "子宮収縮の自覚症状ですが、診断を確定するものではありません。" },
+            { text: "胎動の減少", isCorrect: false, feedback: "胎動減少は胎児仮死の兆候です。" },
+            { text: "子宮頸管長の短縮と規則的な子宮収縮", isCorrect: true, feedback: "正解。子宮頸管長の短縮と規則的な子宮収縮が診断の根拠となります。" },
+            { text: "性器出血がないこと", isCorrect: false, feedback: "切迫早産でも出血が見られることがあります。" }
+        ],
+        mainExplanation: "切迫早産は、妊娠22週から37週未満で、規則的な子宮収縮と子宮頸管の変化（短縮や開大）が認められ、早産に至る可能性が高い状態です。",
+        keywords: ["切迫早産 診断", "子宮頸管長 短縮"]
+    },
+    {
+        id: 608, genre: "産科合併症", difficulty: "中級", // 旧上級→中級：臨床で頻繁に遭遇
+        question: "妊娠中の性器出血の原因として、妊娠初期に最も多いのはどれか。",
+        options: [
+            { text: "前置胎盤", isCorrect: false, feedback: "妊娠中期〜後期に発生します。" },
+            { text: "常位胎盤早期剥離", isCorrect: false, feedback: "妊娠後期に発生します。" },
+            { text: "切迫流産", isCorrect: true, feedback: "正解。妊娠初期の性器出血で最も頻度が高い原因です。" },
+            { text: "子宮頸管ポリープ", isCorrect: false, feedback: "妊娠時期に関わらず出血の原因となりえますが、頻度は切迫流産より低いです。" }
+        ],
+        mainExplanation: "妊娠初期の性器出血は、切迫流産が最も一般的な原因です。出血量や腹痛の有無、胎児の状態によって対応が異なります。",
+        keywords: ["妊娠初期 性器出血", "切迫流産"]
+    },
+    {
+        id: 609, genre: "産科合併症", difficulty: "鬼レベル",
+        question: "羊水塞栓症の初期症状として、最も特徴的なのはどれか。",
+        options: [
+            { text: "急激な高血圧", isCorrect: false, feedback: "低血圧になることが多いです。" },
+            { text: "意識障害、呼吸困難、ショック", isCorrect: true, feedback: "正解。急激な呼吸循環不全が羊水塞栓症の典型的な初期症状です。" },
+            { text: "軽度の発熱と倦怠感", isCorrect: false, feedback: "感染症の症状であり、羊水塞栓症とは異なります。" },
+            { text: "持続的な胎動の消失", isCorrect: false, feedback: "胎動消失は胎児仮死の兆候ですが、母体の症状ではありません。" }
+        ],
+        mainExplanation: "羊水塞栓症は、分娩中または分娩直後に羊水成分が母体血中に流入し、急激な呼吸循環不全（呼吸困難、チアノーゼ、低血圧、ショック）を引き起こす重篤な合併症です。",
+        keywords: ["羊水塞栓症 初期症状", "呼吸循環不全 羊水塞栓"]
+    },
+    {
+        id: 610, genre: "産科合併症", difficulty: "中級",
+        question: "妊娠中に発症する貧血で、最も頻度が高いのはどれか。",
+        options: [
+            { text: "巨赤芽球性貧血", isCorrect: false, feedback: "葉酸欠乏による貧血ですが、鉄欠乏性貧血ほど頻繁ではありません。" },
+            { text: "再生不良性貧血", isCorrect: false, feedback: "稀な重篤な貧血です。" },
+            { text: "鉄欠乏性貧血", isCorrect: true, feedback: "正解。胎児への鉄供給増加と循環血液量増加による希釈性変化のため、最も頻度が高いです。" },
+            { text: "溶血性貧血", isCorrect: false, feedback: "稀な貧血です。" }
+        ],
+        mainExplanation: "妊娠中は、胎児の成長に必要な鉄の需要が増加することと、循環血液量の増加による希釈性変化のため、鉄欠乏性貧血が最も頻繁に発生します。",
+        keywords: ["妊娠中 貧血 種類", "鉄欠乏性貧血 妊娠"]
+    },
+    {
+        id: 611, genre: "産科合併症", difficulty: "鬼レベル", // 旧上級→鬼：専門的な合併症管理
+        question: "妊娠中に甲状腺機能亢進症と診断された妊婦の管理で、最も注意すべき合併症はどれか。",
+        options: [
+            { text: "妊娠糖尿病", isCorrect: false, feedback: "関連はありますが、最も注意すべき合併症ではありません。" },
+            { text: "切迫早産", isCorrect: false, feedback: "リスクは増加しますが、最も重篤な合併症ではありません。" },
+            { text: "甲状腺クリーゼ", isCorrect: true, feedback: "正解。甲状腺クリーゼは生命を脅かす重篤な状態であり、特に注意が必要です。" },
+            { text: "巨大児", isCorrect: false, feedback: "むしろ胎児発育不全のリスクがあります。" }
+        ],
+        mainExplanation: "妊娠中の甲状腺機能亢進症は、母体や胎児に様々な合併症を引き起こす可能性がありますが、中でも甲状腺クリーゼは致死率の高い重篤な状態であり、その発症を予防し、早期に診断・治療することが重要です。",
+        keywords: ["妊娠中 甲状腺機能亢進症 合併症", "甲状腺クリーゼ 妊娠"]
+    },
+    {
+        id: 612, genre: "産科合併症", difficulty: "鬼レベル",
+        question: "DIC（播種性血管内凝固症候群）が産科領域で最も多く合併する疾患はどれか。",
+        options: [
+            { text: "妊娠糖尿病", isCorrect: false, feedback: "DICとの直接的な関連は低いです。" },
+            { text: "切迫流産", isCorrect: false, feedback: "DICとの関連は低いです。" },
+            { text: "常位胎盤早期剥離", isCorrect: true, feedback: "正解。剥離した胎盤組織から大量のトロンボプラスチンが放出され、DICを誘発しやすいです。" },
+            { text: "前置胎盤", isCorrect: false, feedback: "出血のリスクは高いですが、DICの合併は常位胎盤早期剥離ほど多くありません。" }
+        ],
+        mainExplanation: "DIC（播種性血管内凝固症候群）は、産科領域では常位胎盤早期剥離に最も多く合併します。剥離した胎盤組織から血液凝固を促進する物質が大量に放出され、全身の血管内で微小血栓が多発し、凝固因子が消費されて出血傾向になる重篤な病態です。",
+        keywords: ["DIC 産科合併症", "常位胎盤早期剥離 DIC"]
+    },
+    {
+        id: 613, genre: "産科合併症", difficulty: "中級",
+        question: "子宮外妊娠の症状として最も多いのはどれか。",
+        options: [
+            { text: "無月経、少量の性器出血、下腹部痛", isCorrect: true, feedback: "正解。これらの症状が典型的にみられます。" },
+            { text: "大量の性器出血と激しい腹痛", isCorrect: false, feedback: "破裂した場合の症状ですが、初期症状としては少ないです。" },
+            { text: "発熱と悪寒", isCorrect: false, feedback: "感染症の症状です。" },
+            { text: "強い吐き気と嘔吐", isCorrect: false, feedback: "妊娠悪阻の症状です。" }
+        ],
+        mainExplanation: "子宮外妊娠（異所性妊娠）は、受精卵が子宮体部以外の場所に着床することです。典型的な症状は、妊娠初期に起こる無月経、少量の性器出血、間欠的な下腹部痛です。破裂すると激しい腹痛とショック状態に陥ります。",
+        keywords: ["子宮外妊娠 症状", "異所性妊娠"]
+    },
+    {
+        id: 614, genre: "産科合併症", difficulty: "鬼レベル", // 旧上級→鬼：数値基準の暗記
+        question: "羊水過多症の診断基準として、AFI（羊水インデックス）が何cm以上の場合を指すか。",
+        options: [
+            { text: "8cm以上", isCorrect: false, feedback: "これは正常範囲の下限に近い値です。" },
+            { text: "15cm以上", isCorrect: false, feedback: "軽度の羊水過多の範囲です。" },
+            { text: "24cm以上", isCorrect: true, feedback: "正解。AFIが24cm以上で羊水過多症と診断されます。" },
+            { text: "30cm以上", isCorrect: false, feedback: "これは重度の羊水過多です。" }
+        ],
+        mainExplanation: "羊水過多症は、羊水量が異常に増加した状態です。超音波検査でAFI（羊水インデックス）が24cm以上、またはMVP（最大羊水深度）が8cm以上で診断されます。胎児の形態異常や母体の糖尿病などが原因となることがあります。",
+        keywords: ["羊水過多症 診断基準 AFI", "羊水インデックス"]
+    },
+    {
+        id: 615, genre: "産科合併症", difficulty: "鬼レベル",
+        question: "妊娠中に発症する急性脂肪肝（AFLP）の診断基準に含まれる項目として誤っているのはどれか。",
+        options: [
+            { text: "肝機能障害（ALT, ASTの上昇）", isCorrect: false, feedback: "診断基準に含まれます。" },
+            { text: "低血糖", isCorrect: false, feedback: "診断基準に含まれます。" },
+            { text: "高ビリルビン血症", isCorrect: false, feedback: "診断基準に含まれます。" },
+            { text: "高コレステロール血症", isCorrect: true, feedback: "誤り（正解）。急性脂肪肝ではコレステロール値は必ずしも高くなく、むしろ低下することがあります。" }
+        ],
+        mainExplanation: "妊娠中の急性脂肪肝（AFLP）は、肝臓に脂肪が蓄積し、重篤な肝不全をきたす稀な疾患です。肝機能障害、低血糖、高ビリルビン血症、凝固障害などが診断基準に含まれます。高コレステロール血症は直接的な診断基準ではありません。",
+        keywords: ["妊娠中急性脂肪肝 AFLP 診断", "肝機能障害 妊娠"]
+    },
+
+    // === 追加問題セット ===
+
+    // --- 助産管理 追加 ---
+    {
+        id: 401, genre: "助産管理", difficulty: "中級",
+        question: "助産師が分娩時に行う児頭回旋の目的として最も適切なのはどれか。",
+        options: [
+            { text: "分娩時間を短縮するため", isCorrect: false, feedback: "時間短縮が主目的ではありません。" },
+            { text: "会陰裂傷を完全に防止するため", isCorrect: false, feedback: "裂傷のリスクを下げますが完全防止ではありません。" },
+            { text: "児頭の娩出をスムーズにするため", isCorrect: true, feedback: "正解。最適な方向へ導き娩出を円滑にします。" },
+            { text: "胎児の心拍を安定させるため", isCorrect: false, feedback: "直接の目的ではありません。" }
+        ],
+        mainExplanation: "児頭回旋は、児頭の進行方向を整え、母体への負担を軽減しつつ安全に娩出するために行われます。",
+        keywords: ["児頭回旋 目的", "助産師 分娩介助"]
+    },
+
+    {
+        id: 402, genre: "助産管理", difficulty: "中級",
+        question: "産褥早期の観察項目として優先度が最も高いのはどれか。",
+        options: [
+            { text: "食欲の有無", isCorrect: false, feedback: "重要ですが最優先ではありません。" },
+            { text: "悪露の量と性状", isCorrect: true, feedback: "正解。産後出血の早期発見につながります。" },
+            { text: "睡眠時間", isCorrect: false, feedback: "重要ですが生命危機の評価ではありません。" },
+            { text: "乳房の張り", isCorrect: false, feedback: "後期に重要な評価項目です。" }
+        ],
+        mainExplanation: "産褥早期は子宮復古と出血管理が最優先であり、悪露観察が重要です。",
+        keywords: ["産褥 観察 悪露", "産後出血 管理"]
+    },
+
+    {
+        id: 403, genre: "助産管理", difficulty: "鬼レベル",
+        question: "助産所開設時に保健所へ提出が義務付けられていない書類はどれか。",
+        options: [
+            { text: "管理者の免許証写し", isCorrect: false, feedback: "提出が必要です。" },
+            { text: "嘱託医師の承諾書", isCorrect: false, feedback: "提出が必要です。" },
+            { text: "経営収支計画書", isCorrect: true, feedback: "正解。経営計画は提出義務はありません。" },
+            { text: "施設平面図", isCorrect: false, feedback: "提出が必要です。" }
+        ],
+        mainExplanation: "助産所開設時には施設基準や連携体制の確認が重視され、経営内容までは求められません。",
+        keywords: ["助産所 開設 届出", "助産所 必要書類"]
+    },
+
+    // --- 遺伝子 追加 ---
+    {
+        id: 451, genre: "遺伝子", difficulty: "中級",
+        question: "ミトコンドリア遺伝の特徴として正しいのはどれか。",
+        options: [
+            { text: "父親からのみ遺伝する", isCorrect: false, feedback: "母系遺伝です。" },
+            { text: "男女で発症率が同じ", isCorrect: false, feedback: "男女とも発症しますが母系遺伝です。" },
+            { text: "母親からすべての子へ遺伝する", isCorrect: true, feedback: "正解。ミトコンドリアは母系遺伝です。" },
+            { text: "男性のみ発症する", isCorrect: false, feedback: "男女とも発症します。" }
+        ],
+        mainExplanation: "ミトコンドリアDNAは卵子由来のため母系遺伝となります。",
+        keywords: ["ミトコンドリア遺伝", "母系遺伝"]
+    },
+
+    {
+        id: 452, genre: "遺伝子", difficulty: "鬼レベル",
+        question: "染色体構造異常のうち、逆位の説明として正しいのはどれか。",
+        options: [
+            { text: "染色体が一部欠失する", isCorrect: false, feedback: "欠失ではありません。" },
+            { text: "染色体の一部が逆向きに再結合する", isCorrect: true, feedback: "正解。逆位です。" },
+            { text: "他の染色体と結合する", isCorrect: false, feedback: "転座です。" },
+            { text: "染色体が二倍になる", isCorrect: false, feedback: "重複です。" }
+        ],
+        mainExplanation: "逆位は遺伝情報量は変わらないが減数分裂時に問題を生じることがあります。",
+        keywords: ["染色体逆位", "構造異常"]
+    },
+
+    // --- 超音波検査 追加 ---
+    {
+        id: 501, genre: "超音波検査", difficulty: "中級",
+        question: "妊娠中期の胎児発育評価に最も適した指標はどれか。",
+        options: [
+            { text: "CRL", isCorrect: false, feedback: "初期の指標です。" },
+            { text: "BPD", isCorrect: true, feedback: "正解。妊娠中期以降の基本指標です。" },
+            { text: "GS", isCorrect: false, feedback: "初期指標です。" },
+            { text: "MVP", isCorrect: false, feedback: "羊水評価指標です。" }
+        ],
+        mainExplanation: "BPD・AC・FLなどを組み合わせて胎児発育を評価します。",
+        keywords: ["胎児発育 BPD", "妊娠中期 超音波"]
+    },
+
+    {
+        id: 502, genre: "超音波検査", difficulty: "鬼レベル",
+        question: "胎児水腫の超音波所見として最も特徴的なのはどれか。",
+        options: [
+            { text: "羊水過少", isCorrect: false, feedback: "むしろ羊水過多が多いです。" },
+            { text: "皮下浮腫と胸水・腹水の貯留", isCorrect: true, feedback: "正解。全身性浮腫が特徴です。" },
+            { text: "脳室拡大", isCorrect: false, feedback: "水頭症の所見です。" },
+            { text: "胃泡消失", isCorrect: false, feedback: "食道閉鎖などで見られます。" }
+        ],
+        mainExplanation: "胎児水腫は全身の浮腫や体腔液貯留を認める重篤な状態です。",
+        keywords: ["胎児水腫 超音波", "胎児浮腫 所見"]
+    },
+
+    // ===== 追加問題 第2弾 =====
+
+    // --- 助産管理 ---
+    {
+        id: 503, genre: "助産管理", difficulty: "中級",
+        question: "分娩第1期において産婦の不安を軽減する助産師の対応として最も適切なのはどれか。",
+        options: [
+            { text: "医学的説明を最小限にする", isCorrect: false, feedback: "説明不足は不安を増強します。" },
+            { text: "産婦の訴えを傾聴する", isCorrect: true, feedback: "正解。傾聴が最も重要です。" },
+            { text: "痛みを我慢させる", isCorrect: false, feedback: "不安と恐怖を強めます。" },
+            { text: "分娩進行を詳しく伝えない", isCorrect: false, feedback: "情報提供は安心につながります。" }
+        ],
+        mainExplanation: "心理的支援は分娩進行にも好影響を与えます。",
+        keywords: ["分娩期 ケア", "産婦 不安 軽減"]
+    },
+
+    {
+        id: 504, genre: "助産管理", difficulty: "鬼レベル",
+        question: "ハイリスク妊婦の搬送判断において最も優先すべき指標はどれか。",
+        options: [
+            { text: "妊婦の希望", isCorrect: false, feedback: "重要ですが最優先ではありません。" },
+            { text: "母体バイタルサインの異常", isCorrect: true, feedback: "正解。生命危機の評価が最優先です。" },
+            { text: "分娩進行度", isCorrect: false, feedback: "母体の安全が最優先です。" },
+            { text: "家族の意向", isCorrect: false, feedback: "安全評価が最優先されます。" }
+        ],
+        mainExplanation: "母体の生命を守る判断がすべてに優先されます。",
+        keywords: ["母体搬送 判断基準", "ハイリスク妊娠 管理"]
+    },
+
+    // --- 遺伝子 ---
+    {
+        id: 520, genre: "遺伝子", difficulty: "中級",
+        question: "常染色体劣性遺伝の特徴として正しいのはどれか。",
+        options: [
+            { text: "世代ごとに必ず発症する", isCorrect: false, feedback: "劣性では飛び世代が起こります。" },
+            { text: "保因者は無症状であることが多い", isCorrect: true, feedback: "正解。保因者は通常無症状です。" },
+            { text: "父から息子にのみ遺伝する", isCorrect: false, feedback: "性別は関係ありません。" },
+            { text: "女性のみ発症する", isCorrect: false, feedback: "男女とも発症します。" }
+        ],
+        mainExplanation: "劣性遺伝では両親が保因者の場合に発症します。",
+        keywords: ["常染色体劣性遺伝", "保因者"]
+    },
+
+    {
+        id: 521, genre: "遺伝子", difficulty: "鬼レベル",
+        question: "ロバートソン転座の説明として正しいのはどれか。",
+        options: [
+            { text: "相同染色体同士が交換される", isCorrect: false, feedback: "相互転座の説明です。" },
+            { text: "短腕同士が融合する", isCorrect: true, feedback: "正解。13,14,15,21,22番染色体で起こります。" },
+            { text: "染色体が部分的に欠失する", isCorrect: false, feedback: "欠失ではありません。" },
+            { text: "逆向きに結合する", isCorrect: false, feedback: "逆位です。" }
+        ],
+        mainExplanation: "ロバートソン転座はダウン症の原因の1つです。",
+        keywords: ["ロバートソン転座", "染色体異常"]
+    },
+
+    // --- 超音波検査 ---
+    {
+        id: 540, genre: "超音波検査", difficulty: "中級",
+        question: "妊娠後期に推定体重算出に用いられない指標はどれか。",
+        options: [
+            { text: "BPD", isCorrect: false, feedback: "使用されます。" },
+            { text: "AC", isCorrect: false, feedback: "使用されます。" },
+            { text: "FL", isCorrect: false, feedback: "使用されます。" },
+            { text: "CRL", isCorrect: true, feedback: "正解。初期専用の指標です。" }
+        ],
+        mainExplanation: "推定体重はBPD・AC・FLなどから算出します。",
+        keywords: ["推定体重 超音波", "胎児計測"]
+    },
+
+    {
+        id: 541, genre: "超音波検査", difficulty: "鬼レベル",
+        question: "前置胎盤の超音波所見として最も適切なのはどれか。",
+        options: [
+            { text: "胎盤が子宮底部に付着", isCorrect: false, feedback: "正常位置です。" },
+            { text: "胎盤が内子宮口を覆う", isCorrect: true, feedback: "正解。前置胎盤の定義です。" },
+            { text: "羊水過少", isCorrect: false, feedback: "直接の所見ではありません。" },
+            { text: "臍帯巻絡", isCorrect: false, feedback: "別の所見です。" }
+        ],
+        mainExplanation: "経腟超音波が最も診断精度が高いです。",
+        keywords: ["前置胎盤 超音波", "胎盤位置異常"]
+    },
+
+    // ===== 助産管理 =====
+
+    {
+        id: 600, genre: "助産管理", difficulty: "中級",
+        question: "分娩第2期において努責を開始する適切なタイミングはどれか。",
+        options: [
+            { text: "子宮口8cm開大時", isCorrect: false, feedback: "全開大ではありません。" },
+            { text: "子宮口全開大かつ児頭下降時", isCorrect: true, feedback: "正解。医学的適応が必要です。" },
+            { text: "産婦がいきみたいと訴えた時", isCorrect: false, feedback: "主観だけでは判断しません。" },
+            { text: "破水した直後", isCorrect: false, feedback: "直接関係しません。" }
+        ],
+        mainExplanation: "無理な努責は母児双方に負担を与えるため適切な時期が重要。",
+        keywords: ["分娩第2期", "努責"]
+    },
+
+    {
+        id: 601, genre: "助産管理", difficulty: "鬼レベル",
+        question: "常位胎盤早期剥離で最も重篤な合併症はどれか。",
+        options: [
+            { text: "弛緩出血", isCorrect: false, feedback: "二次的に起こります。" },
+            { text: "DIC", isCorrect: true, feedback: "正解。致命的合併症です。" },
+            { text: "羊水過多", isCorrect: false, feedback: "関連しません。" },
+            { text: "前期破水", isCorrect: false, feedback: "直接の合併症ではありません。" }
+        ],
+        mainExplanation: "胎盤早期剥離はDICを引き起こす緊急疾患。",
+        keywords: ["胎盤早期剥離", "DIC"]
+    },
+
+    {
+        id: 602, genre: "助産管理", difficulty: "中級",
+        question: "分娩進行を阻害する心理的要因として最も適切なのはどれか。",
+        options: [
+            { text: "安心感", isCorrect: false, feedback: "促進因子です。" },
+            { text: "恐怖と緊張", isCorrect: true, feedback: "正解。カテコールアミン分泌を高めます。" },
+            { text: "信頼関係", isCorrect: false, feedback: "促進します。" },
+            { text: "リラックス", isCorrect: false, feedback: "進行を促します。" }
+        ],
+        mainExplanation: "恐怖・緊張は子宮収縮を抑制する。",
+        keywords: ["分娩進行", "心理要因"]
+    },
+
+    // ===== 遺伝子 =====
+
+    {
+        id: 640, genre: "遺伝子", difficulty: "中級",
+        question: "減数分裂で起こる現象として正しいのはどれか。",
+        options: [
+            { text: "DNA複製のみが起こる", isCorrect: false, feedback: "組換えが起こります。" },
+            { text: "相同染色体の交叉", isCorrect: true, feedback: "正解。遺伝的多様性を生む。" },
+            { text: "体細胞分裂と同一", isCorrect: false, feedback: "異なります。" },
+            { text: "染色体数が倍になる", isCorrect: false, feedback: "半数になります。" }
+        ],
+        mainExplanation: "減数分裂では交叉と染色体数半減が起こる。",
+        keywords: ["減数分裂", "交叉"]
+    },
+
+    {
+        id: 641, genre: "遺伝子", difficulty: "鬼レベル",
+        question: "トリプレットリピート病の代表例はどれか。",
+        options: [
+            { text: "フェニルケトン尿症", isCorrect: false, feedback: "代謝異常です。" },
+            { text: "ハンチントン病", isCorrect: true, feedback: "正解。CAGリピート増加。" },
+            { text: "血友病", isCorrect: false, feedback: "X連鎖です。" },
+            { text: "嚢胞性線維症", isCorrect: false, feedback: "塩素チャネル異常。" }
+        ],
+        mainExplanation: "CAGリピート異常は神経変性疾患を引き起こす。",
+        keywords: ["トリプレットリピート", "ハンチントン病"]
+    },
+
+    // ===== 超音波検査 =====
+
+    {
+        id: 680, genre: "超音波検査", difficulty: "中級",
+        question: "妊娠初期に心拍確認が可能となる時期はおよそ何週か。",
+        options: [
+            { text: "3週", isCorrect: false, feedback: "早すぎます。" },
+            { text: "5〜6週", isCorrect: true, feedback: "正解。経腟超音波で確認可能。" },
+            { text: "9週", isCorrect: false, feedback: "もっと早期に確認可能。" },
+            { text: "12週", isCorrect: false, feedback: "遅すぎます。" }
+        ],
+        mainExplanation: "心拍確認は妊娠5〜6週が目安。",
+        keywords: ["胎児心拍", "妊娠初期"]
+    },
+
+    {
+        id: 681, genre: "超音波検査", difficulty: "鬼レベル",
+        question: "胎児発育不全(IUGR)で最も鋭敏な超音波指標はどれか。",
+        options: [
+            { text: "BPD", isCorrect: false, feedback: "頭囲は保たれます。" },
+            { text: "AC", isCorrect: true, feedback: "正解。腹囲が最初に低下します。" },
+            { text: "FL", isCorrect: false, feedback: "変化は遅いです。" },
+            { text: "CRL", isCorrect: false, feedback: "初期指標です。" }
+        ],
+        mainExplanation: "IUGRでは腹囲低下が最初の兆候。",
+        keywords: ["IUGR", "AC"]
+    }
+
+]; // --- 配列はここで閉じるのが正しい ---
+
+// --- 2. LOGIC ---
+
+    let currentQuestions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let userMistakes = [];
+    const MAX_QUESTIONS = 15; // 出題数を15問に設定
+
+    // Elements
+    const startScreen = document.getElementById('start-screen');
+    const quizScreen = document.getElementById('quiz-screen');
+    const resultScreen = document.getElementById('result-screen');
+    const questionText = document.getElementById('q-text');
+    const genreBadge = document.getElementById('q-genre');
+    const diffBadge = document.getElementById('q-diff');
+    const optionsContainer = document.getElementById('options-container');
+    const progressFill = document.getElementById('progress-fill');
+    const explanationArea = document.getElementById('explanation-area');
+    const nextBtn = document.getElementById('next-btn');
+
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function startQuiz(mode) {
+        // Get selected difficulty
+        const diffRadios = document.getElementsByName('difficulty');
+        let selectedDiff = "中級";
+        for(const r of diffRadios) if(r.checked) selectedDiff = r.value;
+
+        // Filter
+        let filtered = questionDatabase.filter(q => q.difficulty === selectedDiff);
+        if (mode !== 'mixed') {
+            filtered = filtered.filter(q => q.genre === mode);
+        }
+
+        if (filtered.length < MAX_QUESTIONS) {
+            alert(`申し訳ありません。「${mode}」の「${selectedDiff}」問題は${MAX_QUESTIONS}問に満たないため、開始できません。他の組み合わせをお試しください。（現在 ${filtered.length} 問）`);
+            return;
+        }
+
+        // Setup
+        shuffle(filtered);
+        currentQuestions = filtered.slice(0, MAX_QUESTIONS);
+
+        currentQuestionIndex = 0;
+        score = 0;
+        userMistakes = [];
+
+        startScreen.classList.remove('active');
+        resultScreen.classList.remove('active');
+        quizScreen.classList.add('active');
+
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = currentQuestions[currentQuestionIndex];
+        // UI
+        questionText.textContent = q.question;
+        genreBadge.textContent = q.genre;
+        diffBadge.textContent = q.difficulty;
+        diffBadge.className = `badge badge-diff ${q.difficulty}`; // 色変え用クラス
+
+        document.getElementById('question-counter').textContent = `Q ${currentQuestionIndex + 1} / ${currentQuestions.length}`;
+        document.getElementById('score-counter').textContent = `Score: ${score}`;
+
+        const percent = ((currentQuestionIndex) / currentQuestions.length) * 100;
+        progressFill.style.width = `${percent}%`;
+
+        explanationArea.style.display = 'none';
+        nextBtn.style.display = 'none';
+        optionsContainer.innerHTML = '';
+
+        // Options
+        const optionsToShow = [...q.options];
+        // shuffle(optionsToShow); // 選択肢ランダム化する場合はコメントアウト解除
+
+        optionsToShow.forEach((opt) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.textContent = opt.text;
+            btn.onclick = () => handleAnswer(opt, btn, q);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function handleAnswer(selectedOption, btnElement, questionObj) {
+        // Lock UI
+        const allBtns = optionsContainer.querySelectorAll('.option-btn');
+        allBtns.forEach(b => b.disabled = true);
+        nextBtn.style.display = 'block';
+
+        const isCorrect = selectedOption.isCorrect;
+        if (isCorrect) {
+            btnElement.classList.add('correct');
+            score++;
+            document.getElementById('result-icon').textContent = "⭕";
+            document.getElementById('result-text').textContent = "正解！";
+            document.getElementById('result-text').style.color = "var(--success)";
+        } else {
+            btnElement.classList.add('incorrect');
+            allBtns.forEach(b => {
+                if (b.textContent === questionObj.options.find(o => o.isCorrect).text) {
+                    b.classList.add('correct');
+                }
+            });
+            document.getElementById('result-icon').textContent = "❌";
+            document.getElementById('result-text').textContent = "不正解...";
+            document.getElementById('result-text').style.color = "var(--error)";
+
+            userMistakes.push({
+                question: questionObj.question,
+                correctAnswer: questionObj.options.find(o => o.isCorrect).text,
+                explanation: questionObj.mainExplanation
+            });
+        }
+        document.getElementById('score-counter').textContent = `Score: ${score}`;
+
+        // Explanation & Links
+        document.getElementById('main-explanation').textContent = questionObj.mainExplanation;
+
+        // Build Google Search Links
+        const refContainer = document.getElementById('ref-links');
+        refContainer.innerHTML = '';
+        if (questionObj.keywords && questionObj.keywords.length > 0) {
+            questionObj.keywords.forEach(kw => {
+                const link = document.createElement('a');
+                link.className = 'ref-link';
+                // 検索URL生成
+                link.href = `https://www.google.com/search?q=${encodeURIComponent(kw)}`;
+                link.target = "_blank";
+                link.innerHTML = `🔍 ${kw}`;
+                refContainer.appendChild(link);
+            });
+        } else {
+            refContainer.textContent = "関連キーワードなし";
+        }
+
+        // Option Feedback
+        const fbContainer = document.getElementById('option-feedbacks');
+        fbContainer.innerHTML = '';
+        questionObj.options.forEach((opt) => {
+            const item = document.createElement('div');
+            item.className = 'option-fb-item';
+            const marker = opt.isCorrect ? "○" : "×";
+            const color = opt.isCorrect ? "var(--success)" : "var(--error)";
+            item.innerHTML = `<span class="fb-marker" style="color:${color}">${marker}</span> <b>${opt.text}</b><br><span style="font-size:0.85rem; color:#666; margin-left:28px; display:block; margin-top:2px;">👉 ${opt.feedback}</span>`;
+            fbContainer.appendChild(item);
+        });
+
+        explanationArea.style.display = 'block';
+        explanationArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < currentQuestions.length) {
+            renderQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        quizScreen.classList.remove('active');
+        resultScreen.classList.add('active');
+        document.getElementById('final-score').textContent = score;
+        document.getElementById('total-count').textContent = currentQuestions.length;
+
+        const msg = document.getElementById('feedback-message');
+        const percentage = (score / currentQuestions.length) * 100;
+
+        if (percentage === 100) {
+            msg.textContent = "素晴らしい！完璧です！🎉";
+            msg.style.color = "var(--primary)";
+        } else if (percentage >= 80) {
+            msg.textContent = "合格圏内です！その調子！👍";
+            msg.style.color = "var(--secondary)";
+} else {
+            msg.textContent = "復習して弱点を克服しましょう！💪";
+            msg.style.color = "var(--text)";
+        }
+
+        const list = document.getElementById('review-list');
+        list.innerHTML = '';
+        if (userMistakes.length === 0) {
+            list.innerHTML = '<li style="text-align:center; list-style:none; padding:20px;">全問正解です！復習事項はありません✨</li>';
+        } else {
+            userMistakes.forEach(mistake => {
+                const li = document.createElement('li');
+                li.className = 'review-item';
+                li.innerHTML = `
+                    <div class="review-q">Q. ${mistake.question}</div>
+                    <div class="review-ans">正解: ${mistake.correctAnswer}</div>
+                    <div style="font-size:0.9rem; color:#555;">${mistake.explanation}</div>
+                `;
+                list.appendChild(li);
+            });
+        }
+    }
+</script>
+</body>
+</html>
